@@ -36,3 +36,5 @@
 #include "primitives/line.h"
 #include "primitives/circle.h"
 #include "primitives/rect.h"
+
+#include "path/path.h"
