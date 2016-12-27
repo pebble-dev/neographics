@@ -16,34 +16,6 @@ void n_gpath_destroy(n_GPath * path) {
 
 // --- //
 
-void n_prv_transform_points(uint8_t point_amt, n_GPoint * points_in, n_GPoint * points_out,
-                            int16_t angle, n_GPoint offset) {
-    for (uint32_t i = 0; i < point_amt; i++) {
-        points_out[i] = points_in[i];
-#ifndef NO_TRIG
-        if (angle) {
-            int64_t sine   = sin_lookup(angle),
-                    cosine = cos_lookup(angle);
-            points_out[i].x = (cosine * points_in[i].x -   sine * points_in[i].y) / TRIG_MAX_RATIO;
-            points_out[i].y = (  sine * points_in[i].x + cosine * points_in[i].y) / TRIG_MAX_RATIO;
-        }
-#endif
-        points_out[i].x += offset.x;
-        points_out[i].y += offset.y;
-    }
-}
-
-void n_gpath_draw(n_GContext * ctx, n_GPath * path) {
-    n_GPoint * points = malloc(sizeof(n_GPoint) * path->num_points);
-    n_prv_transform_points(path->num_points, path->points, points,
-                           path->angle, path->offset);
-    for (uint32_t p = 0; p < path->num_points - 1; p++)
-        n_graphics_draw_line(ctx, points[p], points[p + 1]);
-    if (!path->open)
-        n_graphics_draw_line(ctx, points[path->num_points - 1], points[0]);
-    free(points);
-}
-
 static void n_prv_bubblesort(int16_t * numbers, uint32_t amt) {
     // Yes, bubblesort is sub-ideal. However, bubblesort is absolutely enough
     // for 2-8 lines which will usually pass through a scanline.
@@ -64,12 +36,17 @@ static void n_prv_bubblesort(int16_t * numbers, uint32_t amt) {
     } while(swapped);
 }
 
-static void n_gpath_fill_bounded(n_GContext * ctx, n_GPath * path,
-                                 int16_t minx, int16_t maxx, int16_t miny, int16_t maxy) {
-    n_GPoint * points = malloc(sizeof(n_GPoint) * path->num_points);
-    n_prv_transform_points(path->num_points, path->points, points,
-                           path->angle, path->offset);
-    uint32_t num_points = path->num_points; // less lookups
+// --- //
+
+void n_graphics_draw_path(n_GContext * ctx, uint32_t num_points, n_GPoint * points, bool open) {
+    for (uint32_t p = 0; p < num_points - 1; p++)
+        n_graphics_draw_line(ctx, points[p], points[p + 1]);
+    if (!open)
+        n_graphics_draw_line(ctx, points[num_points - 1], points[0]);
+}
+
+static void n_graphics_fill_path_bounded(n_GContext * ctx, uint32_t num_points, n_GPoint * points,
+                                         int16_t minx, int16_t maxx, int16_t miny, int16_t maxy) {
 #ifdef PBL_BW
     uint8_t color = __ARGB_TO_INTERNAL(ctx->fill_color.argb);
 #endif
@@ -132,11 +109,46 @@ static void n_gpath_fill_bounded(n_GContext * ctx, n_GPath * path,
         }
     }
     free(x_positions);
+}
+
+void n_graphics_fill_path(n_GContext * ctx, uint32_t num_points, n_GPoint * points) {
+    n_graphics_fill_path_bounded(ctx, num_points, points, 0, __SCREEN_WIDTH, 0, __SCREEN_HEIGHT);
+}
+
+// --- //
+
+void n_prv_transform_points(uint32_t num_points, n_GPoint * points_in, n_GPoint * points_out,
+                            int16_t angle, n_GPoint offset) {
+    for (uint32_t i = 0; i < num_points; i++) {
+        points_out[i] = points_in[i];
+#ifndef NO_TRIG
+        if (angle) {
+            int64_t sine   = sin_lookup(angle),
+                    cosine = cos_lookup(angle);
+            points_out[i].x = (cosine * points_in[i].x -   sine * points_in[i].y) / TRIG_MAX_RATIO;
+            points_out[i].y = (  sine * points_in[i].x + cosine * points_in[i].y) / TRIG_MAX_RATIO;
+        }
+#endif
+        points_out[i].x += offset.x;
+        points_out[i].y += offset.y;
+    }
+}
+
+void n_gpath_draw(n_GContext * ctx, n_GPath * path) {
+    n_GPoint * points = malloc(sizeof(n_GPoint) * path->num_points);
+    n_prv_transform_points(path->num_points, path->points, points,
+                           path->angle, path->offset);
+    n_graphics_draw_path(ctx, path->num_points, points, path->open);
     free(points);
 }
 
 void n_gpath_fill(n_GContext * ctx, n_GPath * path) {
-    n_gpath_fill_bounded(ctx, path, 0, __SCREEN_WIDTH, 0, __SCREEN_HEIGHT);
+    // n_gpath_fill_bounded(ctx, path, 0, __SCREEN_WIDTH, 0, __SCREEN_HEIGHT);
+    n_GPoint * points = malloc(sizeof(n_GPoint) * path->num_points);
+    n_prv_transform_points(path->num_points, path->points, points,
+        path->angle, path->offset);
+    n_graphics_fill_path(ctx, path->num_points, points);
+    free(points);
 }
 
 // --- //
