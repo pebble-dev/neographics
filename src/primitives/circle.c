@@ -275,7 +275,7 @@ void n_graphics_draw_thick_circle_bounded(n_GContext * ctx, n_GPoint p, uint16_t
 }
 
 void n_graphics_draw_circle(n_GContext * ctx, n_GPoint p, uint16_t radius) {
-    if (radius == 0)
+    if (radius == 0 || !(ctx->stroke_color.argb & (0b11 << 6)))
         return;
     if (ctx->stroke_width == 1) {
         n_graphics_draw_circle_1px_bounded(ctx, p, radius, 0, __SCREEN_WIDTH, 0, __SCREEN_HEIGHT);
@@ -286,5 +286,6 @@ void n_graphics_draw_circle(n_GContext * ctx, n_GPoint p, uint16_t radius) {
 }
 
 void n_graphics_fill_circle(n_GContext * ctx, n_GPoint p, uint16_t radius) {
-    n_graphics_fill_circle_bounded(ctx, p, radius, 0, __SCREEN_WIDTH, 0, __SCREEN_HEIGHT);
+    if (ctx->fill_color.argb & (0b11 << 6))
+        n_graphics_fill_circle_bounded(ctx, p, radius, 0, __SCREEN_WIDTH, 0, __SCREEN_HEIGHT);
 }

@@ -89,11 +89,12 @@ void n_graphics_draw_thin_rect(n_GContext * ctx, n_GRect rect) {
 }
 
 void n_graphics_draw_rect(n_GContext * ctx, n_GRect rect, uint16_t radius, n_GCornerMask mask) {
-    if (ctx->stroke_width == 1 && (radius == 0 || mask == 0)) {
+    if (!(ctx->stroke_color.argb & (0b11 << 6)))
+        ;
+    else if (ctx->stroke_width == 1 && (radius == 0 || mask == 0))
         n_graphics_draw_thin_rect_bounded(ctx, n_grect_standardize(rect), 0, __SCREEN_WIDTH, 0, __SCREEN_HEIGHT);
-    } else {
+    else
         n_graphics_draw_rect_bounded(ctx, n_grect_standardize(rect), radius, mask, 0, __SCREEN_WIDTH, 0, __SCREEN_HEIGHT);
-    }
 }
 
 static void n_graphics_fill_rect_bounded(n_GContext * ctx, n_GRect rect, uint16_t radius, n_GCornerMask mask,
@@ -177,7 +178,9 @@ static void n_graphics_fill_0rad_rect_bounded(n_GContext * ctx, n_GRect rect,
 }
 
 void n_graphics_fill_rect(n_GContext * ctx, n_GRect rect, uint16_t radius, n_GCornerMask mask) {
-    if (radius == 0 || (mask & 0b1111) == 0)
+    if (!(ctx->stroke_color.argb & (0b11 << 6)))
+        ;
+    else if (radius == 0 || (mask & 0b1111) == 0)
         n_graphics_fill_0rad_rect_bounded(ctx, rect, 0, __SCREEN_WIDTH, 0, __SCREEN_HEIGHT);
     else
         n_graphics_fill_rect_bounded(ctx, rect, radius, mask, 0, __SCREEN_WIDTH, 0, __SCREEN_HEIGHT);

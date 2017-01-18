@@ -204,7 +204,7 @@ void n_graphics_prv_draw_thick_line_bounded(n_GContext * ctx,
 
 void n_graphics_draw_line(n_GContext * ctx, n_GPoint from, n_GPoint to) {
     // TODO check layer bounds
-    if (ctx->stroke_width == 0)
+    if (ctx->stroke_width == 0 || !(ctx->stroke_color.argb & (0b11 << 6)))
         return;
     else if (ctx->stroke_width == 1)
         n_graphics_prv_draw_1px_line_bounded(ctx, from, to,
