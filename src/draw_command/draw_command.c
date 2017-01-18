@@ -92,7 +92,6 @@ void n_gdraw_command_draw(n_GContext * ctx, n_GDrawCommand * command, n_GPoint o
 #ifdef PBL_BW
     static const uint8_t bw_lookup[] = {0b00000000, 0b11101010, 0b11000000, 0b11111111};
     if (command->flags.use_bw_color) {
-        APP_LOG(APP_LOG_LEVEL_INFO, "using bw %u %u %u", command->flags.use_bw_color, command->flags.bw_stroke, command->flags.bw_fill);
         n_graphics_context_set_stroke_color(ctx, (n_GColor) { .argb = bw_lookup[command->flags.bw_stroke & 0b11] });
         n_graphics_context_set_fill_color(ctx, (n_GColor) { .argb = bw_lookup[command->flags.bw_fill & 0b11] });
     } else {

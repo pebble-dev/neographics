@@ -252,7 +252,6 @@ void n_gpath_draw(n_GContext * ctx, n_GPath * path) {
 }
 
 void n_gpath_fill(n_GContext * ctx, n_GPath * path) {
-    APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "col %u", ctx->fill_color.argb);
     if (!(ctx->fill_color.argb & (0b11 << 6)))
         return;
     // n_gpath_fill_bounded(ctx, path, 0, __SCREEN_WIDTH, 0, __SCREEN_HEIGHT);
