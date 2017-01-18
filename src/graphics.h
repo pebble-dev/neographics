@@ -38,3 +38,5 @@
 #include "primitives/rect.h"
 
 #include "path/path.h"
+
+#include "draw_command/draw_command.h"

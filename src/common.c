@@ -44,7 +44,7 @@ void n_graphics_prv_draw_col(uint8_t * fb,
         int16_t x, int16_t top, int16_t bottom,
         int16_t minx, int16_t maxx, int16_t miny, int16_t maxy,
         uint8_t fill) {
-    if (x < minx || x >= maxx || top >= maxy || bottom < miny) {
+    if (x < minx || x >= maxx || top >= maxy || bottom < miny || bottom < top) {
         return;
     }
 
