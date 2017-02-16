@@ -40,3 +40,6 @@
 #include "path/path.h"
 
 #include "draw_command/draw_command.h"
+
+#include "fonts/fonts.h"
+#include "text/text.h"
