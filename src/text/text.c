@@ -47,22 +47,27 @@ void n_graphics_draw_text(
             if ((text[i] & 0b11100000) == 0b11000000) {
                 codepoint = ((text[i  ] &  0b11111) << 6)
                           +  (text[i+1] & 0b111111);
+                i += 2;
             } else if ((text[i] & 0b11110000) == 0b11100000) {
                 codepoint = ((text[i  ] &   0b1111) << 12)
                           + ((text[i+1] & 0b111111) << 6)
                           +  (text[i+2] & 0b111111);
+                i += 3;
             } else if ((text[i] & 0b11111000) == 0b11110000) {
                 codepoint = ((text[i  ] &    0b111) << 18)
                           + ((text[i+1] & 0b111111) << 12)
                           + ((text[i+2] & 0b111111) << 6)
                           +  (text[i+3] & 0b111111);
+                i += 4;
+            } else {
+                i += 1;
             }
             glyph = n_graphics_font_get_glyph_info(font, codepoint);
         } else {
             glyph = n_graphics_font_get_glyph_info(font, text[i]);
+            i += 1;
         }
         n_graphics_font_draw_glyph(ctx, glyph, char_begin);
         char_begin.x += glyph->advance;
-        i++;
     }
 }

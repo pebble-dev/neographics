@@ -60,7 +60,7 @@ n_GGlyphInfo * n_graphics_font_get_glyph_info(n_GFontInfo * font, uint32_t codep
 
     if (hash_data->hash_value != (codepoint % hash_table_size))
         // There was no hash table entry with the correct hash. Fall back to tofu.
-        return (n_GGlyphInfo *) data + offset_table_item_length * font->glyph_amount + 4;
+        return (n_GGlyphInfo *) (data + offset_table_item_length * font->glyph_amount + 4);
 
     uint8_t * offset_entry = data + hash_data->offset_table_offset;
 
@@ -78,7 +78,7 @@ n_GGlyphInfo * n_graphics_font_get_glyph_info(n_GFontInfo * font, uint32_t codep
             ? *((uint16_t *) offset_entry)
             : *((uint32_t *) offset_entry)) != codepoint)
         // We couldn't find the correct entry. Fall back to tofu.
-        return (n_GGlyphInfo *) data + offset_table_item_length * font->glyph_amount + 4;
+        return (n_GGlyphInfo *) (data + offset_table_item_length * font->glyph_amount + 4);
 
     data += offset_table_item_length * font->glyph_amount +
         (features & n_GFontFeature2ByteGlyphOffset
