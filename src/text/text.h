@@ -34,8 +34,12 @@
 
 typedef enum n_GTextOverflowMode {
     n_GTextOverflowModeWordWrap = 0,
+        // "Normal" filling mode. Respects \n, cuts off at end.
     n_GTextOverflowModeTrailingEllipsis,
+        // Like WordWrap, but adds a trailing ellipsis at the last renderable
+        // position if there is additional text.
     n_GTextOverflowModeFill,
+        // Renders \n as a space. Has a trailing ellipsis. Is buggy.
 } n_GTextOverflowMode;
 
 typedef enum n_GTextAlignment {
