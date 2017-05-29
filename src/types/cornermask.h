@@ -27,6 +27,15 @@
 |                                                                              |
 `-----------------------------------------------------------------------------*/
 
+/*! \addtogroup Types
+ *  @{
+ *  \addtogroup CornerMask
+ *  @{
+ */
+
+/*!
+ * Describes what corners should be rounded when drawing a shape.
+ */
 typedef enum n_GCornerMask {
     n_GCornersNone       = 0, // support all grammatical preferences
     n_GCornerNone        = 0,
@@ -40,3 +49,7 @@ typedef enum n_GCornerMask {
     n_GCornersRight      = 0b1010,
     n_GCornersAll        = 0b1111,
 } n_GCornerMask;
+
+/*! @}
+ *  @}
+ */

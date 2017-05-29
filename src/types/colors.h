@@ -22,6 +22,15 @@
 #pragma once
 #include "color.h"
 
+/*! \addtogroup Types
+ *  @{
+ *  \addtogroup Color
+ *  @{
+ *  \addtogroup Definitions
+ *  All the color definitions.
+ *  @{
+ */
+
 #define n_GColorWhiteARGB8                 ((uint8_t)   0b11111111)
 #define n_GColorWhite                      ((n_GColor) { .argb = (n_GColorWhiteARGB8) })
 
@@ -220,5 +229,7 @@
 #define n_GColorPastelYellowARGB8          ((uint8_t)   0b11111110)
 #define n_GColorPastelYellow               ((n_GColor) { .argb = (n_GColorPastelYellowARGB8) })
 
-// #define n_GColorWhiteARGB8                 ((uint8_t)   0b11111111)
-// #define n_GColorWhite                      ((n_GColor) { .argb = (n_GColorWhiteARGB8) })
+// --- //
+
+/*! @}
+ */
