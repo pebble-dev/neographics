@@ -104,29 +104,52 @@ void n_gdraw_command_draw(n_GContext * ctx, n_GDrawCommand * command, n_GPoint o
     n_graphics_context_set_stroke_width(ctx, command->stroke_width);
     // Note that fill_path and draw_path (and their ppath equivalents)
     // are private apis. Therefore, they currently ignore the alpha component.
+    n_GPoint * pts_transformed;
     switch (command->type) {
         case n_GDrawCommandTypePath:
+            pts_transformed = malloc(sizeof(n_GPoint) * command->num_points);
+            if (!pts_transformed) { break; }
+            n_prv_transform_points(command->num_points, command->points,
+                pts_transformed, 0, offset);
             if (ctx->fill_color.argb & (0b11 << 6))
-                n_graphics_fill_path(ctx, command->num_points, command->points);
+                n_graphics_fill_path(ctx, command->num_points, pts_transformed);
             if (ctx->stroke_color.argb & (0b11 << 6))
-                n_graphics_draw_path(ctx, command->num_points, command->points, command->path_flags.path_open);
+                n_graphics_draw_path(ctx, command->num_points, pts_transformed, command->path_flags.path_open);
+            free(pts_transformed);
             break;
         case n_GDrawCommandTypeCircle:
             for (uint32_t i = 0; i < command->num_points; i++) {
-                n_graphics_fill_circle(ctx, command->points[i], command->circle_radius);
-                n_graphics_draw_circle(ctx, command->points[i], command->circle_radius);
+                n_graphics_fill_circle(ctx, n_GPoint(
+                        command->points[i].x + offset.x,
+                        command->points[i].y + offset.y),
+                    command->circle_radius);
+                n_graphics_draw_circle(ctx, n_GPoint(
+                        command->points[i].x + offset.x,
+                        command->points[i].y + offset.y),
+                    command->circle_radius);
             }
             break;
         case n_GDrawCommandTypePrecisePath:
+            pts_transformed = malloc(sizeof(n_GPoint) * command->num_points);
+            if (!pts_transformed) { break; }
+            n_prv_transform_points(command->num_points, command->points,
+                pts_transformed, 0, n_GPoint(offset.x << 3, offset.y << 3));
             if (ctx->fill_color.argb & (0b11 << 6))
-                n_graphics_fill_ppath(ctx, command->num_points, command->points);
+                n_graphics_fill_ppath(ctx, command->num_points, pts_transformed);
             if (ctx->stroke_color.argb & (0b11 << 6))
-                n_graphics_draw_ppath(ctx, command->num_points, command->points, command->path_flags.path_open);
+                n_graphics_draw_ppath(ctx, command->num_points, pts_transformed, command->path_flags.path_open);
+            free(pts_transformed);
             break;
         case n_GDrawCommandTypePreciseCircle:
             for (uint32_t i = 0; i < command->num_points; i++) {
-                n_graphics_fill_circle(ctx, n_GPoint((command->points[i].x + 4) >> 3, (command->points[i].y + 4) >> 3), command->circle_radius);
-                n_graphics_draw_circle(ctx, n_GPoint((command->points[i].x + 4) >> 3, (command->points[i].y + 4) >> 3), command->circle_radius);
+                n_graphics_fill_circle(ctx, n_GPoint(
+                        ((command->points[i].x + 4) >> 3) + offset.x,
+                        ((command->points[i].y + 4) >> 3) + offset.y),
+                    command->circle_radius);
+                n_graphics_draw_circle(ctx, n_GPoint(
+                        ((command->points[i].x + 4) >> 3) + offset.x,
+                        ((command->points[i].y + 4) >> 3) + offset.y),
+                    command->circle_radius);
             }
             break;
         default:
@@ -252,8 +275,11 @@ n_GDrawCommandImage * n_gdraw_command_image_create_with_resource(uint32_t resour
     ResHandle handle = resource_get_handle(resource_id);
     size_t image_size = resource_size(handle) - 8;
     n_GDrawCommandImage * image = malloc(image_size);
-    resource_load(image, handle, image_size);
-    return image;
+    if (image) {
+        resource_load_byte_range(handle, 8, (uint8_t *) image, image_size);
+        return image;
+    }
+    return NULL;
 }
 n_GDrawCommandImage * n_gdraw_command_image_clone(n_GDrawCommandImage * image) {
     return NULL; } // TODO

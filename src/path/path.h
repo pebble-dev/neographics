@@ -96,5 +96,11 @@ void n_gpath_rotate_to(n_GPath * path, int32_t angle);
 */
 void n_gpath_move_to(n_GPath * path, n_GPoint offset);
 
+/*!
+* Transforms a point array with a given angle and offset.
+*/
+void n_prv_transform_points(uint32_t num_points, n_GPoint * points_in, n_GPoint * points_out,
+                            int16_t angle, n_GPoint offset);
+
 /*! @}
  */

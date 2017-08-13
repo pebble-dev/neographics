@@ -56,6 +56,9 @@ void n_graphics_prv_draw_1px_line_bounded(n_GContext * ctx,
         } else {
             for (int16_t y = begin; y <= end; y++) {
                 int16_t x = (dx * (y-from.y) * 2 + e * dy) / (dy * 2) + from.x;
+                if (x < minx || x >= maxx) {
+                    continue;
+                }
 #ifdef PBL_BW
                 n_graphics_set_pixel(ctx, n_GPoint(x, y),
                     ((color >> ((x + y) % 2)) & 1) ?
@@ -81,6 +84,9 @@ void n_graphics_prv_draw_1px_line_bounded(n_GContext * ctx,
         } else {
             for (int16_t x = begin; x <= end; x++) {
                 int16_t y = (dy * (x-from.x) * 2 + e * dx) / (dx * 2) + from.y;
+                if (y < miny || y >= maxy) {
+                    continue;
+                }
 #ifdef PBL_BW
                 n_graphics_set_pixel(ctx, n_GPoint(x, y),
                     ((color >> ((x + y) % 2)) & 1) ?

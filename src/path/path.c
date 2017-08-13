@@ -104,7 +104,6 @@ static void n_graphics_fill_path_bounded(n_GContext * ctx, uint32_t num_points, 
 
             if ( (points[i].y <= y && points[n].y > y) ||
                  (points[i].y >= y && points[n].y < y) ) {
-                bool rep = false;
                 int16_t dx = points[n].x - points[i].x,
                         dy = points[n].y - points[i].y;
                 int8_t e = (dx == 0 ? 0 : (dx > 0 ? 1 : -1));
@@ -174,7 +173,6 @@ static void n_graphics_fill_ppath_bounded(n_GContext * ctx, uint32_t num_points,
 
             if ( (points[i].y <= y && points[n].y > y) ||
                  (points[i].y >= y && points[n].y < y) ) {
-                bool rep = false;
                 int16_t dx = points[n].x - points[i].x,
                         dy = points[n].y - points[i].y;
                 int8_t e = (dx == 0 ? 0 : (dx > 0 ? 1 : -1));

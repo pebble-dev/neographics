@@ -55,14 +55,14 @@ typedef n_GColor8 n_GColor;
 /*!
  * Check for the equality of two n_GColor(s).
  */
-bool n_gcolor_equal(n_GColor8 a, n_GColor8 b) __attribute__((always_inline)) {
+inline bool n_gcolor_equal(n_GColor8 a, n_GColor8 b) {
    return a.argb == b.argb;
 }
 
 /*!
  * Get the ideal text n_GColor over a given background.
  */
-n_GColor8 n_gcolor_legible_over(n_GColor8 color) __attribute__((always_inline)) {
+inline n_GColor8 n_gcolor_legible_over(n_GColor8 color) {
    return (color.r + color.g + color.b > 6) ? n_GColorWhite : n_GColorBlack;
 }
 
