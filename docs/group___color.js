@@ -12,6 +12,6 @@ var group___color =
     [ "n_GColorFromRGB", "group___color.html#gaa985f8e2bbf1231939817c536c147a59", null ],
     [ "n_GColorFromRGBA", "group___color.html#ga75aa2ef1a26439e166c7bd69540674b6", null ],
     [ "n_GColor8", "group___color.html#gaa3713860da59367d2d6fc0178500c0fd", null ],
-    [ "n_gcolor_equal", "group___color.html#gae48675351e83af8d2a35aa9dda63e47b", null ],
-    [ "n_gcolor_legible_over", "group___color.html#ga29c4f5d39e74bba4d77dee04a415e05d", null ]
+    [ "n_gcolor_equal", "group___color.html#gac13dd797ef73151008b4cca168dfdb9d", null ],
+    [ "n_gcolor_legible_over", "group___color.html#gacf35dad6cb5eb9d1c00a0f7a43d220fe", null ]
 ];

@@ -20,5 +20,6 @@ var group__path =
     [ "n_graphics_draw_path", "group__path.html#ga9652e026d76db7999c7afba7ab4d0879", null ],
     [ "n_graphics_draw_ppath", "group__path.html#ga2c2d184635f6dc27ea8db99c73390da2", null ],
     [ "n_graphics_fill_path", "group__path.html#ga9f6ec485a0687feb9d4d36e7d12dd125", null ],
-    [ "n_graphics_fill_ppath", "group__path.html#gaf4832a7bbc8a0ac1ec3961273f63bd9f", null ]
+    [ "n_graphics_fill_ppath", "group__path.html#gaf4832a7bbc8a0ac1ec3961273f63bd9f", null ],
+    [ "n_prv_transform_points", "group__path.html#ga3fd49037d716381316d373f055ea668f", null ]
 ];

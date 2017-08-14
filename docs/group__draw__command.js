@@ -25,7 +25,8 @@ var group__draw__command =
     ] ],
     [ "n_GDrawCommandImage", "structn___g_draw_command_image.html", [
       [ "command_list", "structn___g_draw_command_image.html#a80f2572cf9ef8c57b854d02db667d69e", null ],
-      [ "reserved", "structn___g_draw_command_image.html#a3bcac6d4b3272c02bdecd4c2536b3bda", null ],
+      [ "reserved_0", "structn___g_draw_command_image.html#aac9b758fa356a03848250c6b536213a4", null ],
+      [ "reserved_1", "structn___g_draw_command_image.html#a66a5ea4b02e255869943aab14dc5a96d", null ],
       [ "version", "structn___g_draw_command_image.html#a9e692ef42c853fdd3fabd3a2d2bff653", null ],
       [ "view_box", "structn___g_draw_command_image.html#ab54f2c316f580761476d215c7c118592", null ]
     ] ],
@@ -37,7 +38,8 @@ var group__draw__command =
       [ "frames", "structn___g_draw_command_sequence.html#a35211efef322015b6165904459fe35a3", null ],
       [ "num_frames", "structn___g_draw_command_sequence.html#abfa410b76be52f26c4daecc273c312e8", null ],
       [ "play_count", "structn___g_draw_command_sequence.html#a192286ee3bcee782c1567e04908dd325", null ],
-      [ "reserved", "structn___g_draw_command_sequence.html#aa1fdf12946301ad9ed192f0a3a6ae2ce", null ],
+      [ "reserved_0", "structn___g_draw_command_sequence.html#a544e42d3101abb16782d5a0fd89a7ff6", null ],
+      [ "reserved_1", "structn___g_draw_command_sequence.html#abf7df94b8ca2dc092104204082568bba", null ],
       [ "version", "structn___g_draw_command_sequence.html#abe100ef66199201fc8bd03141f66c337", null ],
       [ "view_box", "structn___g_draw_command_sequence.html#a957bcf3dbd014be906dba33ed6ac1241", null ]
     ] ],

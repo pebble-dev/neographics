@@ -44,7 +44,8 @@ $(document).ready(function(){initNavTree('group__typerect.html','');});
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#define-members">Macros</a> &#124;
-<a href="#typedef-members">Typedefs</a>  </div>
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">Rect<div class="ingroups"><a class="el" href="group___types.html">Types</a></div></div>  </div>
 </div><!--header-->
@@ -67,6 +68,11 @@ Typedefs</h2></td></tr>
 <tr class="memitem:ga4b4f38d6b02667eeb4c2e0886cca4b28"><td class="memItemLeft" align="right" valign="top"><a id="ga4b4f38d6b02667eeb4c2e0886cca4b28"></a>
 typedef struct <a class="el" href="structn___g_rect.html">n_GRect</a>&#160;</td><td class="memItemRight" valign="bottom"><b>n_GRect</b></td></tr>
 <tr class="separator:ga4b4f38d6b02667eeb4c2e0886cca4b28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga11466d598522286b7c2b96edfe12f724"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structn___g_point.html">n_GPoint</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__typerect.html#ga11466d598522286b7c2b96edfe12f724">n_grect_center_point</a> (<a class="el" href="structn___g_rect.html">n_GRect</a> *rect)</td></tr>
+<tr class="separator:ga11466d598522286b7c2b96edfe12f724"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <h2 class="groupheader">Macro Definition Documentation</h2>
@@ -126,9 +132,29 @@ typedef struct <a class="el" href="structn___g_rect.html">n_GRect</a>&#160;</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">((a).size.w &gt;= 0 \</div><div class="line">        ? (a).size.h &gt;= 0 \</div><div class="line">            <span class="comment">/* normal */</span> \</div><div class="line">            ? (<a class="code" href="group__typerect.html#gaa33db04a870c7680c565a741dc4573f2">n_GRect</a>) { {  (a).origin.x,      (a).origin.y }, \</div><div class="line">                          {  (a).size.w,        (a).size.h     }} \</div><div class="line">            <span class="comment">/* switch vertically */</span> \</div><div class="line">            : (<a class="code" href="group__typerect.html#gaa33db04a870c7680c565a741dc4573f2">n_GRect</a>) { {  (a).origin.x,      (a).origin.y + (a).size.h - 1 }, \</div><div class="line">                          {  (a).size.w,       -(a).size.h + 2 }} \</div><div class="line">        : (a).size.h &gt;= 0 \</div><div class="line">            <span class="comment">/* switch horizontally */</span> \</div><div class="line">            ? (<a class="code" href="structn___g_rect.html">n_GRect</a>) { {  (a).origin.x + (a).size.w - 1, (a).origin.y }, \</div><div class="line">                          { -(a).size.w + 2,    (a).size.h     }} \</div><div class="line">            <span class="comment">/* switch horizontally and vertically */</span> \</div><div class="line">            : (<a class="code" href="group__typerect.html#gaa33db04a870c7680c565a741dc4573f2">n_GRect</a>) { {  (a).origin.x + (a).size.w - 1, (a).origin.y + (a).size.h - 1 }, \</div><div class="line">                          { -(a).size.w + 2,   -(a).size.h + 2 }})</div><div class="ttc" id="group__typerect_html_gaa33db04a870c7680c565a741dc4573f2"><div class="ttname"><a href="group__typerect.html#gaa33db04a870c7680c565a741dc4573f2">n_GRect</a></div><div class="ttdeci">#define n_GRect(x, y, w, h)</div><div class="ttdef"><b>Definition:</b> rect.h:46</div></div>
-<div class="ttc" id="structn___g_rect_html"><div class="ttname"><a href="structn___g_rect.html">n_GRect</a></div><div class="ttdef"><b>Definition:</b> rect.h:38</div></div>
+<b>Value:</b><div class="fragment"><div class="line">((a).size.w &gt;= 0 \</div><div class="line">        ? (a).size.h &gt;= 0 \</div><div class="line">            <span class="comment">/* normal */</span> \</div><div class="line">            ? (<a class="code" href="group__typerect.html#gaa33db04a870c7680c565a741dc4573f2">n_GRect</a>) { {  (a).origin.x,      (a).origin.y }, \</div><div class="line">                          {  (a).size.w,        (a).size.h     }} \</div><div class="line">            <span class="comment">/* switch vertically */</span> \</div><div class="line">            : (<a class="code" href="group__typerect.html#gaa33db04a870c7680c565a741dc4573f2">n_GRect</a>) { {  (a).origin.x,      (a).origin.y + (a).size.h - 1 }, \</div><div class="line">                          {  (a).size.w,       -(a).size.h + 2 }} \</div><div class="line">        : (a).size.h &gt;= 0 \</div><div class="line">            <span class="comment">/* switch horizontally */</span> \</div><div class="line">            ? (<a class="code" href="structn___g_rect.html">n_GRect</a>) { {  (a).origin.x + (a).size.w - 1, (a).origin.y }, \</div><div class="line">                          { -(a).size.w + 2,    (a).size.h     }} \</div><div class="line">            <span class="comment">/* switch horizontally and vertically */</span> \</div><div class="line">            : (<a class="code" href="group__typerect.html#gaa33db04a870c7680c565a741dc4573f2">n_GRect</a>) { {  (a).origin.x + (a).size.w - 1, (a).origin.y + (a).size.h - 1 }, \</div><div class="line">                          { -(a).size.w + 2,   -(a).size.h + 2 }})</div><div class="ttc" id="group__typerect_html_gaa33db04a870c7680c565a741dc4573f2"><div class="ttname"><a href="group__typerect.html#gaa33db04a870c7680c565a741dc4573f2">n_GRect</a></div><div class="ttdeci">#define n_GRect(x, y, w, h)</div><div class="ttdef"><b>Definition:</b> rect.h:26</div></div>
+<div class="ttc" id="structn___g_rect_html"><div class="ttname"><a href="structn___g_rect.html">n_GRect</a></div><div class="ttdef"><b>Definition:</b> rect.h:18</div></div>
 </div><!-- fragment --><p>Convenience macro to standardize a rectangle. </p><dl class="section warning"><dt>Warning</dt><dd>Differs from the Pebble OS implementation, which is in-place and takes a pointer. </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="ga11466d598522286b7c2b96edfe12f724"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga11466d598522286b7c2b96edfe12f724">&#9670;&nbsp;</a></span>n_grect_center_point()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structn___g_point.html">n_GPoint</a> n_grect_center_point </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structn___g_rect.html">n_GRect</a> *&#160;</td>
+          <td class="paramname"><em>rect</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Returns the point at the center of a GRect (will prefer top and/or left at even sizes) </p>
 
 </div>
 </div>

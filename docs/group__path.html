@@ -79,6 +79,8 @@ Functions</h2></td></tr>
 <tr class="separator:ga72b69967e7583e6593a28458842274f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2bdb172117eec9438789fdaa9d21a615"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__path.html#ga2bdb172117eec9438789fdaa9d21a615">n_gpath_move_to</a> (<a class="el" href="structn___g_path.html">n_GPath</a> *path, <a class="el" href="structn___g_point.html">n_GPoint</a> offset)</td></tr>
 <tr class="separator:ga2bdb172117eec9438789fdaa9d21a615"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3fd49037d716381316d373f055ea668f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__path.html#ga3fd49037d716381316d373f055ea668f">n_prv_transform_points</a> (uint32_t num_points, <a class="el" href="structn___g_point.html">n_GPoint</a> *points_in, <a class="el" href="structn___g_point.html">n_GPoint</a> *points_out, int16_t angle, <a class="el" href="structn___g_point.html">n_GPoint</a> offset)</td></tr>
+<tr class="separator:ga3fd49037d716381316d373f055ea668f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -392,6 +394,53 @@ typedef&#160;</td><td class="memItemRight" valign="bottom"><b>__attribute__</b><
       </table>
 </div><div class="memdoc">
 <p>Fills a precise path using the even-odd fill rule. </p>
+
+</div>
+</div>
+<a id="ga3fd49037d716381316d373f055ea668f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3fd49037d716381316d373f055ea668f">&#9670;&nbsp;</a></span>n_prv_transform_points()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void n_prv_transform_points </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>num_points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structn___g_point.html">n_GPoint</a> *&#160;</td>
+          <td class="paramname"><em>points_in</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structn___g_point.html">n_GPoint</a> *&#160;</td>
+          <td class="paramname"><em>points_out</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int16_t&#160;</td>
+          <td class="paramname"><em>angle</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structn___g_point.html">n_GPoint</a>&#160;</td>
+          <td class="paramname"><em>offset</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Transforms a point array with a given angle and offset. </p>
 
 </div>
 </div>
