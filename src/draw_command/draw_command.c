@@ -1,24 +1,3 @@
-/*\
-|*|
-|*|   Neographics: a tiny graphics library.
-|*|   Copyright (C) 2016 Johannes Neubrand <johannes_n@icloud.com>
-|*|
-|*|   This program is free software; you can redistribute it and/or
-|*|   modify it under the terms of the GNU General Public License
-|*|   as published by the Free Software Foundation; either version 2
-|*|   of the License, or (at your option) any later version.
-|*|
-|*|   This program is distributed in the hope that it will be useful,
-|*|   but WITHOUT ANY WARRANTY; without even the implied warranty of
-|*|   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-|*|   GNU General Public License for more details.
-|*|
-|*|   You should have received a copy of the GNU General Public License
-|*|   along with this program; if not, write to the Free Software
-|*|   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-|*|
-\*/
-
 #include "draw_command.h"
 
 /*\
@@ -107,7 +86,7 @@ void n_gdraw_command_draw(n_GContext * ctx, n_GDrawCommand * command, n_GPoint o
     n_GPoint * pts_transformed;
     switch (command->type) {
         case n_GDrawCommandTypePath:
-            pts_transformed = malloc(sizeof(n_GPoint) * command->num_points);
+            pts_transformed = NGFX_PREFERRED_malloc(sizeof(n_GPoint) * command->num_points);
             if (!pts_transformed) { break; }
             n_prv_transform_points(command->num_points, command->points,
                 pts_transformed, 0, offset);
@@ -115,7 +94,7 @@ void n_gdraw_command_draw(n_GContext * ctx, n_GDrawCommand * command, n_GPoint o
                 n_graphics_fill_path(ctx, command->num_points, pts_transformed);
             if (ctx->stroke_color.argb & (0b11 << 6))
                 n_graphics_draw_path(ctx, command->num_points, pts_transformed, command->path_flags.path_open);
-            free(pts_transformed);
+            NGFX_PREFERRED_free(pts_transformed);
             break;
         case n_GDrawCommandTypeCircle:
             for (uint32_t i = 0; i < command->num_points; i++) {
@@ -130,7 +109,7 @@ void n_gdraw_command_draw(n_GContext * ctx, n_GDrawCommand * command, n_GPoint o
             }
             break;
         case n_GDrawCommandTypePrecisePath:
-            pts_transformed = malloc(sizeof(n_GPoint) * command->num_points);
+            pts_transformed = NGFX_PREFERRED_malloc(sizeof(n_GPoint) * command->num_points);
             if (!pts_transformed) { break; }
             n_prv_transform_points(command->num_points, command->points,
                 pts_transformed, 0, n_GPoint(offset.x << 3, offset.y << 3));
@@ -138,7 +117,7 @@ void n_gdraw_command_draw(n_GContext * ctx, n_GDrawCommand * command, n_GPoint o
                 n_graphics_fill_ppath(ctx, command->num_points, pts_transformed);
             if (ctx->stroke_color.argb & (0b11 << 6))
                 n_graphics_draw_ppath(ctx, command->num_points, pts_transformed, command->path_flags.path_open);
-            free(pts_transformed);
+            NGFX_PREFERRED_free(pts_transformed);
             break;
         case n_GDrawCommandTypePreciseCircle:
             for (uint32_t i = 0; i < command->num_points; i++) {
@@ -177,10 +156,11 @@ static bool n_prv_gdraw_command_draw_cb(n_GDrawCommand * command, uint32_t index
 }
 
 void n_gdraw_command_list_draw(n_GContext * ctx, n_GDrawCommandList * list, n_GPoint offset) {
-    nPrvGDrawCommandListDrawContext * context = malloc(sizeof(nPrvGDrawCommandListDrawContext));
+    nPrvGDrawCommandListDrawContext * context =
+        NGFX_PREFERRED_malloc(sizeof(nPrvGDrawCommandListDrawContext));
     context->ctx = ctx; context->offset = offset;
     n_gdraw_command_list_iterate(list, n_prv_gdraw_command_draw_cb, context);
-    free(context);
+    NGFX_PREFERRED_free(context);
 }
 
 /* command list getters */
@@ -273,10 +253,10 @@ void n_gdraw_command_sequence_set_bounds_size(n_GDrawCommandSequence * sequence,
 
 n_GDrawCommandImage * n_gdraw_command_image_create_with_resource(uint32_t resource_id) {
     ResHandle handle = resource_get_handle(resource_id);
-    size_t image_size = resource_size(handle) - 8;
-    n_GDrawCommandImage * image = malloc(image_size);
+    size_t image_size = resource_size(handle);
+    n_GDrawCommandImage * image = NGFX_PREFERRED_malloc(image_size);
     if (image) {
-        resource_load_byte_range(handle, 8, (uint8_t *) image, image_size);
+        NGFX_PREFERRED_resource_load(handle, (uint8_t *) image, image_size);
         return image;
     }
     return NULL;
@@ -284,18 +264,21 @@ n_GDrawCommandImage * n_gdraw_command_image_create_with_resource(uint32_t resour
 n_GDrawCommandImage * n_gdraw_command_image_clone(n_GDrawCommandImage * image) {
     return NULL; } // TODO
 void n_gdraw_command_image_destroy(n_GDrawCommandImage * image) {
-    free(image);
+    NGFX_PREFERRED_free(image);
 }
 
 n_GDrawCommandSequence * n_gdraw_command_sequence_create_with_resource(uint32_t resource_id) {
     ResHandle handle = resource_get_handle(resource_id);
-    size_t sequence_size = resource_size(handle) - 8;
-    n_GDrawCommandSequence * sequence = malloc(sequence_size);
-    resource_load(sequence, handle, sequence_size);
-    return sequence;
+    size_t sequence_size = resource_size(handle);
+    n_GDrawCommandSequence * sequence = NGFX_PREFERRED_malloc(sequence_size);
+    if (sequence) {
+        NGFX_PREFERRED_resource_load(sequence, handle, sequence_size);
+        return sequence;
+    }
+    return NULL;;
 }
 n_GDrawCommandSequence * n_gdraw_command_sequence_clone(n_GDrawCommandSequence * image) {
     return NULL; }
 void n_gdraw_command_sequence_destroy(n_GDrawCommandSequence * sequence) {
-    free(sequence);
+    NGFX_PREFERRED_free(sequence);
 }

@@ -1,24 +1,3 @@
-/*\
-|*|
-|*|   Neographics: a tiny graphics library.
-|*|   Copyright (C) 2016 Johannes Neubrand <johannes_n@icloud.com>
-|*|
-|*|   This program is free software; you can redistribute it and/or
-|*|   modify it under the terms of the GNU General Public License
-|*|   as published by the Free Software Foundation; either version 2
-|*|   of the License, or (at your option) any later version.
-|*|
-|*|   This program is distributed in the hope that it will be useful,
-|*|   but WITHOUT ANY WARRANTY; without even the implied warranty of
-|*|   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-|*|   GNU General Public License for more details.
-|*|
-|*|   You should have received a copy of the GNU General Public License
-|*|   along with this program; if not, write to the Free Software
-|*|   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-|*|
-\*/
-
 #include "context.h"
 
 // TODO optimization: calculate bytefill when color is set.
@@ -72,22 +51,36 @@ void n_graphics_context_end(n_GContext * ctx) {
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 GBitmap * n_graphics_capture_frame_buffer(n_GContext * ctx) {
+#ifndef NGFX_IS_CORE
     return graphics_capture_frame_buffer(ctx->underlying_context);
+#else
+    return graphics_capture_frame_buffer(ctx);
+#endif
 }
 
 GBitmap * n_graphics_capture_frame_buffer_format(n_GContext * ctx, GBitmapFormat format) {
+#ifndef NGFX_IS_CORE
     return graphics_capture_frame_buffer_format(ctx->underlying_context, format);
+#else
+    return graphics_capture_frame_buffer_format(ctx, format);
+#endif
 }
 
 bool n_graphics_release_frame_buffer(n_GContext * ctx, GBitmap * bitmap) {
+#ifndef NGFX_IS_CORE
     return graphics_release_frame_buffer(ctx->underlying_context, bitmap);
+#else
+    return graphics_release_frame_buffer(ctx, bitmap);
+#endif
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 static n_GContext * n_graphics_context_create() {
-    n_GContext * out = calloc(1, sizeof(n_GContext));
+    n_GContext * out = NGFX_PREFERRED_calloc(1, sizeof(n_GContext));
+#ifndef NGFX_IS_CORE
     out->underlying_context = NULL;
+#endif
     n_graphics_context_set_stroke_color(out, (n_GColor) {.argb = 0b11000000});
     n_graphics_context_set_fill_color(out, (n_GColor) {.argb = 0b11111111});
     n_graphics_context_set_text_color(out, (n_GColor) {.argb = 0b11000000});
@@ -111,5 +104,5 @@ n_GContext * n_graphics_context_from_graphics_context(GContext * ctx) {
 }
 
 void n_graphics_context_destroy(n_GContext * ctx) {
-    free(ctx);
+    NGFX_PREFERRED_free(ctx);
 }

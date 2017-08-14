@@ -1,26 +1,6 @@
-/*\
-|*|
-|*|   Neographics: a tiny graphics library.
-|*|   Copyright (C) 2016 Johannes Neubrand <johannes_n@icloud.com>
-|*|
-|*|   This program is free software; you can redistribute it and/or
-|*|   modify it under the terms of the GNU General Public License
-|*|   as published by the Free Software Foundation; either version 2
-|*|   of the License, or (at your option) any later version.
-|*|
-|*|   This program is distributed in the hope that it will be useful,
-|*|   but WITHOUT ANY WARRANTY; without even the implied warranty of
-|*|   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-|*|   GNU General Public License for more details.
-|*|
-|*|   You should have received a copy of the GNU General Public License
-|*|   along with this program; if not, write to the Free Software
-|*|   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-|*|
-\*/
-
 #pragma once
 #include <pebble.h>
+#include "macros.h"
 #include "types.h"
 
 /*-----------------------------------------------------------------------------.
@@ -52,14 +32,15 @@ typedef struct n_GContext {
     bool antialias;
     bool stroke_caps;
     uint16_t stroke_width;
-    GContext * underlying_context; // This is necessary for the time being
-                                   // because direct framebuffer access doens't
-                                   // exist in the development/testing environment.
-                                   // Once we move to prod & a firmware where
-                                   // neographics _is_ the underlying context,
-                                   // this will no longer be necessary.
     GBitmap * bitmap;
     uint8_t * fbuf;
+#ifndef NGFX_IS_CORE
+    GContext * underlying_context; // This is necessary where direct framebuffer
+                                   // access doens't exist (for example, in the
+                                   // PebbleOS development/testing environment).
+                                   // In firmwares where neographics _is_ the
+                                   // underlying context, this is no longer necessary.
+#endif
 } n_GContext;
 
 /*!

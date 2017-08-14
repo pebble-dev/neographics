@@ -1,24 +1,3 @@
-/*\
-|*|
-|*|   Neographics: a tiny graphics library.
-|*|   Copyright (C) 2016 Johannes Neubrand <johannes_n@icloud.com>
-|*|
-|*|   This program is free software; you can redistribute it and/or
-|*|   modify it under the terms of the GNU General Public License
-|*|   as published by the Free Software Foundation; either version 2
-|*|   of the License, or (at your option) any later version.
-|*|
-|*|   This program is distributed in the hope that it will be useful,
-|*|   but WITHOUT ANY WARRANTY; without even the implied warranty of
-|*|   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-|*|   GNU General Public License for more details.
-|*|
-|*|   You should have received a copy of the GNU General Public License
-|*|   along with this program; if not, write to the Free Software
-|*|   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-|*|
-\*/
-
 #include "path.h"
 
 n_GPath * n_gpath_create(n_GPathInfo * path_info) {
@@ -32,7 +11,7 @@ n_GPath * n_gpath_create(n_GPathInfo * path_info) {
 }
 
 void n_gpath_destroy(n_GPath * path) {
-    free(path);
+    NGFX_PREFERRED_free(path);
 }
 
 // --- //
@@ -139,7 +118,7 @@ static void n_graphics_fill_path_bounded(n_GContext * ctx, uint32_t num_points, 
 #endif
         }
     }
-    free(x_positions);
+    NGFX_PREFERRED_free(x_positions);
 }
 
 static void n_graphics_fill_ppath_bounded(n_GContext * ctx, uint32_t num_points, n_GPoint * _points,
@@ -208,8 +187,8 @@ static void n_graphics_fill_ppath_bounded(n_GContext * ctx, uint32_t num_points,
 #endif
         }
     }
-    free(x_positions);
-    free(points);
+    NGFX_PREFERRED_free(x_positions);
+    NGFX_PREFERRED_free(points);
 }
 
 void n_graphics_fill_path(n_GContext * ctx, uint32_t num_points, n_GPoint * points) {
@@ -246,7 +225,7 @@ void n_gpath_draw(n_GContext * ctx, n_GPath * path) {
     n_prv_transform_points(path->num_points, path->points, points,
                            path->angle, path->offset);
     n_graphics_draw_path(ctx, path->num_points, points, path->open);
-    free(points);
+    NGFX_PREFERRED_free(points);
 }
 
 void n_gpath_fill(n_GContext * ctx, n_GPath * path) {
@@ -257,7 +236,7 @@ void n_gpath_fill(n_GContext * ctx, n_GPath * path) {
     n_prv_transform_points(path->num_points, path->points, points,
         path->angle, path->offset);
     n_graphics_fill_path(ctx, path->num_points, points);
-    free(points);
+    NGFX_PREFERRED_free(points);
 }
 
 // --- //
