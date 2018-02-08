@@ -10,10 +10,10 @@
 `-----------------------------------------------------------------------------*/
 
 #ifdef NGFX_IS_CORE
-#define NGFX_PREFERRED_free          (app_free)
-#define NGFX_PREFERRED_calloc        (app_calloc)
-#define NGFX_PREFERRED_malloc        (app_malloc)
-#define NGFX_PREFERRED_resource_load (resource_load_app)
+#define NGFX_PREFERRED_free                   (free)
+#define NGFX_PREFERRED_calloc                 (calloc)
+#define NGFX_PREFERRED_malloc                 (malloc)
+#define NGFX_PREFERRED_resource_load(a, b, c) (resource_load((b), (a), (c)))
 #else
 #define NGFX_PREFERRED_free          (free)
 #define NGFX_PREFERRED_calloc        (calloc)

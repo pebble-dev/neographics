@@ -5,6 +5,7 @@ var group__context =
       [ "bitmap", "structn___g_context.html#a34eb9bee81e59b4e4e44e9ec4644842f", null ],
       [ "fbuf", "structn___g_context.html#acb3fd3a404b7a62e4247d36f68dcdb63", null ],
       [ "fill_color", "structn___g_context.html#ade826009684000e71f8ca1bce9d3c990", null ],
+      [ "offset", "structn___g_context.html#adef67db235f78b741a729878b02c01d4", null ],
       [ "stroke_caps", "structn___g_context.html#a3f0bf60bada1a245ade40a33ecb21b0a", null ],
       [ "stroke_color", "structn___g_context.html#ae353f1690db812f21ff7b283ebc2a0a4", null ],
       [ "stroke_width", "structn___g_context.html#a370342791212c1e384a60892eb64ac89", null ],

@@ -1,5 +1,9 @@
 #pragma once
+#ifdef NGFX_IS_CORE
+#include <stdint.h>
+#else
 #include <pebble.h>
+#endif
 #include "point.h"
 #include "size.h"
 

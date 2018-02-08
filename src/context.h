@@ -32,8 +32,6 @@ typedef struct n_GContext {
     bool antialias;
     bool stroke_caps;
     uint16_t stroke_width;
-    GBitmap * bitmap;
-    uint8_t * fbuf;
 #ifndef NGFX_IS_CORE
     GContext * underlying_context; // This is necessary where direct framebuffer
                                    // access doens't exist (for example, in the
@@ -41,6 +39,9 @@ typedef struct n_GContext {
                                    // In firmwares where neographics _is_ the
                                    // underlying context, this is no longer necessary.
 #endif
+    GBitmap * bitmap;
+    uint8_t * fbuf;
+    n_GRect offset;
 } n_GContext;
 
 /*!
@@ -70,6 +71,8 @@ void n_graphics_context_set_stroke_width(n_GContext * ctx, uint16_t width);
  */
 void n_graphics_context_set_antialiased(n_GContext * ctx, bool antialias);
 
+#ifndef NGFX_IS_CORE
+
 /*!
  * In Pebble OS, use this before drawing to the n_GContext for contexts created
  * from a graphics context (via n_graphics_context_from_graphics_context()).
@@ -77,31 +80,55 @@ void n_graphics_context_set_antialiased(n_GContext * ctx, bool antialias);
  */
 void n_graphics_context_begin(n_GContext * ctx);
 /*!
-* In Pebble OS, use this before drawing to the n_GContext for contexts created
-* from a graphics context (via n_graphics_context_from_graphics_context()).
+ * In Pebble OS, use this before drawing to the n_GContext for contexts created
+ * from a graphics context (via n_graphics_context_from_graphics_context()).
  * Not required on other platforms.
-*/
+ */
 void n_graphics_context_end(n_GContext * ctx);
 
-// TODO implement replacement for GBitmap
-// n_GBitmap * n_graphics_capture_frame_buffer(n_GContext * ctx);
-// n_GBitmap * n_graphics_capture_frame_buffer_format(n_GContext * ctx, n_GBitmapFormat format);
-//     // TODO replacement for GBitmapFormat
-// bool n_graphics_release_frame_buffer(n_GContext * ctx, n_GBitmap * bitmap);
+#else
+
+/*!
+ * In native platforms, freeze the framebuffer and return a GBitmap thereof.
+ */
+GBitmap * n_graphics_capture_frame_buffer(n_GContext * ctx);
+/*!
+ * In native platforms, freeze the framebuffer and return a GBitmap thereof
+ * (using a specified format)
+ */
+GBitmap * n_graphics_capture_frame_buffer_format(n_GContext * ctx, GBitmapFormat format);
+/*!
+ * In native platforms, unfreeze the framebuffer.
+ */
+bool n_graphics_release_frame_buffer(n_GContext * ctx, GBitmap * bitmap);
+
+#endif
 
 /*!
  * Creates a n_GContext based on a framebuffer.
  */
 n_GContext * n_graphics_context_from_buffer(uint8_t * buf);
+
+#ifndef NGFX_IS_CORE
 /*!
  * Creates a n_GContext based on a GContext (provided by Pebble OS).
  */
 n_GContext * n_graphics_context_from_graphics_context(GContext * ctx);
+#endif
+
 /*!
  * Destroys a n_GContext.
  */
 void n_graphics_context_destroy(n_GContext * ctx);
 
+
+#ifdef NGFX_IS_CORE
+/*!
+ * Creates a root n_GContext based on the system framebuffer.
+ * This should be done exactly once. ** This context cannoy be freed. **
+ */
+n_GContext * n_root_graphics_context_from_buffer(uint8_t * buf);
+#endif
 
 /*! @}
  */

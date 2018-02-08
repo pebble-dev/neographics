@@ -1,5 +1,4 @@
 #pragma once
-#include <pebble.h>
 #include "types/color.h"
 #include "types/cornermask.h"
 #include "types/point.h"

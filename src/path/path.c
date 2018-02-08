@@ -1,7 +1,7 @@
 #include "path.h"
 
 n_GPath * n_gpath_create(n_GPathInfo * path_info) {
-    n_GPath * out = malloc(sizeof(n_GPath));
+    n_GPath * out = NGFX_PREFERRED_malloc(sizeof(n_GPath));
     out->num_points = path_info->num_points;
     out->points = path_info->points;
     out->angle = 0;
@@ -72,7 +72,7 @@ static void n_graphics_fill_path_bounded(n_GContext * ctx, uint32_t num_points, 
     miny = __BOUND_NUM(miny, _miny, maxy);
 
     // Further optimization may be possible here to minimize unnecessary allocation
-    int16_t * x_positions = malloc(sizeof(int16_t) * num_points);
+    int16_t * x_positions = NGFX_PREFERRED_malloc(sizeof(int16_t) * num_points);
 
     for (int16_t y = miny; y <= maxy; y++) {
         uint32_t num_x_positions = 0;
@@ -123,7 +123,7 @@ static void n_graphics_fill_path_bounded(n_GContext * ctx, uint32_t num_points, 
 
 static void n_graphics_fill_ppath_bounded(n_GContext * ctx, uint32_t num_points, n_GPoint * _points,
                                          int16_t minx, int16_t maxx, int16_t miny, int16_t maxy) {
-    n_GPoint * points = malloc(sizeof(n_GPoint) * num_points);
+    n_GPoint * points = NGFX_PREFERRED_malloc(sizeof(n_GPoint) * num_points);
     for (uint32_t n = 0; n < num_points; n++) {
         points[n] = n_GPoint((_points[n].x + 4) >> 3, (_points[n].y + 4) >> 3);
     }
@@ -141,7 +141,7 @@ static void n_graphics_fill_ppath_bounded(n_GContext * ctx, uint32_t num_points,
     miny = __BOUND_NUM(miny, _miny, maxy);
 
     // Further optimization may be possible here to minimize unnecessary allocation
-    int16_t * x_positions = malloc(sizeof(int16_t) * num_points);
+    int16_t * x_positions = NGFX_PREFERRED_malloc(sizeof(int16_t) * num_points);
 
     for (int16_t y = miny; y <= maxy; y++) {
         uint32_t num_x_positions = 0;
@@ -221,7 +221,7 @@ void n_prv_transform_points(uint32_t num_points, n_GPoint * points_in, n_GPoint 
 void n_gpath_draw(n_GContext * ctx, n_GPath * path) {
     if (!(ctx->stroke_color.argb & (0b11 << 6)))
         return;
-    n_GPoint * points = malloc(sizeof(n_GPoint) * path->num_points);
+    n_GPoint * points = NGFX_PREFERRED_malloc(sizeof(n_GPoint) * path->num_points);
     n_prv_transform_points(path->num_points, path->points, points,
                            path->angle, path->offset);
     n_graphics_draw_path(ctx, path->num_points, points, path->open);
@@ -232,7 +232,7 @@ void n_gpath_fill(n_GContext * ctx, n_GPath * path) {
     if (!(ctx->fill_color.argb & (0b11 << 6)))
         return;
     // n_gpath_fill_bounded(ctx, path, 0, __SCREEN_WIDTH, 0, __SCREEN_HEIGHT);
-    n_GPoint * points = malloc(sizeof(n_GPoint) * path->num_points);
+    n_GPoint * points = NGFX_PREFERRED_malloc(sizeof(n_GPoint) * path->num_points);
     n_prv_transform_points(path->num_points, path->points, points,
         path->angle, path->offset);
     n_graphics_fill_path(ctx, path->num_points, points);

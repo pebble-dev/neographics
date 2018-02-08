@@ -272,7 +272,7 @@ n_GDrawCommandSequence * n_gdraw_command_sequence_create_with_resource(uint32_t 
     size_t sequence_size = resource_size(handle);
     n_GDrawCommandSequence * sequence = NGFX_PREFERRED_malloc(sequence_size);
     if (sequence) {
-        NGFX_PREFERRED_resource_load(sequence, handle, sequence_size);
+        NGFX_PREFERRED_resource_load(handle, (uint8_t *) sequence, sequence_size);
         return sequence;
     }
     return NULL;;
