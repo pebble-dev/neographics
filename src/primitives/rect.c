@@ -128,7 +128,7 @@ static void n_graphics_fill_rect_bounded(n_GContext * ctx, n_GRect rect, uint16_
                     radius, 1, -1, minx, maxx, miny, maxy);
         if (mask & n_GCornerBottomLeft)
             n_graphics_prv_fill_quarter_circle_bounded(ctx,
-                    n_GPoint(rect.origin.x + radius,
+                    n_GPoint(rect.origin.x + radius + 1,
                              rect.origin.y + rect.size.h - radius - 1),
                     radius, -1, 1, minx, maxx, miny, maxy);
         if (mask & n_GCornerBottomRight)
@@ -138,11 +138,11 @@ static void n_graphics_fill_rect_bounded(n_GContext * ctx, n_GRect rect, uint16_
                     radius, 1, 1, minx, maxx, miny, maxy);
 
         int16_t left_indent_top = rect.origin.x + (mask & n_GCornerTopLeft ? radius : 0),
-                right_indent_top = rect.origin.x + rect.size.w - (mask & n_GCornerTopRight ? radius : 0),
+                right_indent_top = rect.origin.x + rect.size.w - (mask & n_GCornerTopRight ? radius : 0) - 1,
                 left_indent_bottom = rect.origin.x + (mask & n_GCornerBottomLeft ? radius : 0),
-                right_indent_bottom = rect.origin.x + rect.size.w - (mask & n_GCornerBottomRight ? radius : 0);
+                right_indent_bottom = rect.origin.x + rect.size.w - (mask & n_GCornerBottomRight ? radius : 0) - 1;
 
-        for (uint16_t r = 0; r <= radius; r++) {
+        for (uint16_t r = 0; r < radius; r++) {
             n_graphics_prv_draw_row(ctx->fbuf, rect.origin.y + r,
                 left_indent_top, right_indent_top,
                 minx, maxx, miny, maxy, color);
@@ -152,7 +152,7 @@ static void n_graphics_fill_rect_bounded(n_GContext * ctx, n_GRect rect, uint16_
         }
     }
 
-    int16_t right_indent = rect.origin.x + rect.size.w;
+    int16_t right_indent = rect.origin.x + rect.size.w - 1;
     for (int16_t r = rect.origin.y + radius; r <= rect.origin.y + rect.size.h - radius - 1; r++) {
         n_graphics_prv_draw_row(ctx->fbuf, r,
             rect.origin.x, right_indent,
