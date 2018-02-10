@@ -161,17 +161,48 @@ void n_graphics_draw_text(
         if ((char_origin.x + (__CODEPOINT_NEEDS_HYPHEN_AFTER(codepoint) ? hyphen->advance : 0) - lenience
                 > box.origin.x + box.size.w)) {
             if (last_breakable_index > 0) {
-                n_GPoint end = n_graphics_prv_draw_text_line(ctx, text,
-                    line_begin, last_breakable_index, font, line_origin);
+                switch (alignment) {
+                    case n_GTextAlignmentCenter:
+                        n_graphics_prv_draw_text_line(ctx, text,
+                            line_begin, last_breakable_index, font,
+                            n_GPoint(line_origin.x + (box.size.w - (char_origin.x - line_origin.x))/2,
+                                     line_origin.y));
+                        break;
+                    case n_GTextAlignmentRight:
+                        n_graphics_prv_draw_text_line(ctx, text,
+                            line_begin, last_breakable_index, font,
+                            n_GPoint(line_origin.x + box.size.w - (char_origin.x - line_origin.x),
+                                     line_origin.y));
+                        break;
+                    default:
+                        n_graphics_prv_draw_text_line(ctx, text,
+                            line_begin, last_breakable_index, font, line_origin);
+                }
                 index = next_index = last_breakable_index;
                 char_origin.x = box.origin.x, char_origin.y += font->line_height;
                 line_begin = last_breakable_index;
                 last_breakable_index = last_renderable_index = -1;
                 line_origin = char_origin;
             } else if (last_renderable_index > 0) {
-                n_GPoint end = n_graphics_prv_draw_text_line(ctx, text,
-                    line_begin, last_renderable_index, font, line_origin);
-                if (__CODEPOINT_NEEDS_HYPHEN_AFTER(last_renderable_codepoint) || true) {
+                n_GPoint end;
+                switch (alignment) {
+                    case n_GTextAlignmentCenter:
+                        end = n_graphics_prv_draw_text_line(ctx, text,
+                            line_begin, last_renderable_index, font,
+                            n_GPoint(line_origin.x + (box.size.w - (char_origin.x - line_origin.x))/2,
+                                     line_origin.y));
+                        break;
+                    case n_GTextAlignmentRight:
+                        end = n_graphics_prv_draw_text_line(ctx, text,
+                            line_begin, last_renderable_index, font,
+                            n_GPoint(line_origin.x + box.size.w - (char_origin.x - line_origin.x),
+                                     line_origin.y));
+                        break;
+                    default:
+                        end = n_graphics_prv_draw_text_line(ctx, text,
+                            line_begin, last_renderable_index, font, line_origin);
+                }
+                if (__CODEPOINT_NEEDS_HYPHEN_AFTER(last_renderable_codepoint) || true) { // TODO
                     n_graphics_font_draw_glyph(ctx, hyphen, end);
                 }
                 index = next_index = last_renderable_index;
@@ -192,7 +223,23 @@ void n_graphics_draw_text(
         index += (0 * line_begin * last_breakable_codepoint);
     }
     if (index != line_begin) {
-        n_GPoint end = n_graphics_prv_draw_text_line(ctx, text,
-            line_begin, index, font, line_origin);
+        switch (alignment) {
+            case n_GTextAlignmentCenter:
+                n_graphics_prv_draw_text_line(ctx, text,
+                    line_begin, index, font,
+                    n_GPoint(line_origin.x + (box.size.w - (char_origin.x - line_origin.x))/2,
+                             line_origin.y));
+                break;
+            case n_GTextAlignmentRight:
+                n_graphics_prv_draw_text_line(ctx, text,
+                    line_begin, index, font,
+                    n_GPoint(line_origin.x + box.size.w - (char_origin.x - line_origin.x),
+                             line_origin.y));
+                break;
+            case n_GTextAlignmentLeft:
+            default:
+                n_graphics_prv_draw_text_line(ctx, text,
+                    line_begin, index, font, line_origin);
+        }
     }
 }
