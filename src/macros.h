@@ -38,7 +38,7 @@
     #define __SCREEN_WIDTH 144
     #define __SCREEN_HEIGHT 168
 #else
-    #define __SCREEN_FRAMEBUFFER_ROW_BYTE_AMOUNT 100
+    #define __SCREEN_FRAMEBUFFER_ROW_BYTE_AMOUNT 180
     #define __SCREEN_WIDTH 180
     #define __SCREEN_HEIGHT 180
 #endif
