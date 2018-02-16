@@ -213,6 +213,9 @@
 #define n_GColorPastelYellowARGB8          ((uint8_t)   0b11111110)
 #define n_GColorPastelYellow               ((n_GColor) { .argb = (n_GColorPastelYellowARGB8) })
 
+#define n_GColorClearARGB8                 ((uint8_t)   0b00000000)
+#define n_GColorClear                      ((GColor8)  { .argb = (n_GColorClearARGB8) })
+
 // --- //
 
 /*! @}
