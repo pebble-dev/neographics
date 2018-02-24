@@ -1,7 +1,7 @@
 #include "gbitmap.h"
 #include "macros.h"
 
-static uint8_t n_prv_palette_size[] = {
+static const uint8_t n_prv_palette_size[] = {
     0, /* n_GBitmapFormat1Bit */
     0, /* n_GBitmapFormat8Bit */
     2, /* n_GBitmapFormat1BitPalette */
