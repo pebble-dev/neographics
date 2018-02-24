@@ -1,6 +1,7 @@
 #pragma once
 #ifdef NGFX_IS_CORE
 #include <stdint.h>
+#include <stdbool.h>
 #else
 #include <pebble.h>
 #endif
@@ -56,6 +57,31 @@ typedef struct n_GRect {
  * at even sizes)
  */
 n_GPoint n_grect_center_point(n_GRect *rect);
+
+/*!
+ * Tests whether 2 GRect are equal
+ */
+bool n_grect_equal(const n_GRect *rect_a, const n_GRect *rect_b);
+
+/*!
+ * Tests whether the size of a GRect is (0, 0)
+ */
+bool n_grect_is_empty(const n_GRect *const rect);
+
+/*!
+ * Trim one GRect using the edges of a second GRect
+ */
+void n_grect_clip(n_GRect *rect_to_clip, const n_GRect* rect_clipper);
+
+/*!
+ * Tests whether a GRect contains a point
+ */
+bool n_grect_contains_point(const n_GRect *rect, const n_GPoint *point);
+
+/*!
+ * Reduce the width and height of a GRect and centering it relative to the original
+ */
+n_GRect n_grect_crop(n_GRect rect, int32_t crop_size_px);
 
 /*! @}
  *  @}

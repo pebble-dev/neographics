@@ -52,19 +52,9 @@ typedef enum GCompOp {
 	GCompOpSet
 } GCompOp;
 
-typedef enum GBitmapFormat {
-	GBitmapFormat1Bit = 0,
-	GBitmapFormat8Bit,
-	GBitmapFormat1BitPalette,
-	GBitmapFormat2BitPalette,
-	GBitmapFormat4BitPalette,
-} GBitmapFormat;
-
-struct GBitmap {
-	int dummy;
-};
 
 typedef struct GBitmap GBitmap;
+typedef enum n_GBitmapFormat GBitmapFormat;
 
 // Framebuffer
 

@@ -49,6 +49,8 @@ set(sources_neographics
   src/draw_command/draw_command.h
   src/fonts/fonts.c
   src/fonts/fonts.h
+  src/gbitmap/gbitmap.c
+  src/gbitmap/gbitmap.h
   src/path/path.c
   src/path/path.h
   src/primitives/circle.c

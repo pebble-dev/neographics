@@ -1,6 +1,7 @@
 #pragma once
 #ifdef NGFX_IS_CORE
 #include <stdint.h>
+#include <stdbool.h>
 #else
 #include <pebble.h>
 #endif
@@ -34,6 +35,11 @@ typedef struct n_GPoint {
  * Convenience macro for the origin (top left).
  */
 #define n_GPointZero ((n_GPoint) {.x = 0, .y = 0})
+
+/*!
+ * Tests whether 2 GPoint are equal.
+ */
+bool n_gpoint_equal(const n_GPoint* point_a, const n_GPoint* point_b); // implemented in rect.c
 
 /*! @}
  *  @}
