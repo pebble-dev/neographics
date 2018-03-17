@@ -4,9 +4,9 @@
 
 //TODO: Add Doxygen comments
 
-#define NGFX_TEST(module,name,code)
+#define NGFX_TEST(module,name,...)
 
-#define NGFX_BIG_TEST(module,name,code)
+#define NGFX_BIG_TEST(module,name,...)
 
 #undef NGFX_TEST // above was just to document
 #undef NGFX_BIG_TEST

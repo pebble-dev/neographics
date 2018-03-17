@@ -41,15 +41,15 @@ typedef struct n_GRect {
             ? (n_GRect) { {  (a).origin.x,      (a).origin.y }, \
                           {  (a).size.w,        (a).size.h     }} \
             /* switch vertically */ \
-            : (n_GRect) { {  (a).origin.x,      (a).origin.y + (a).size.h - 1 }, \
-                          {  (a).size.w,       -(a).size.h + 2 }} \
+            : (n_GRect) { {  (a).origin.x,      (a).origin.y + (a).size.h }, \
+                          {  (a).size.w,       -(a).size.h }} \
         : (a).size.h >= 0 \
             /* switch horizontally */ \
-            ? (n_GRect) { {  (a).origin.x + (a).size.w - 1, (a).origin.y }, \
-                          { -(a).size.w + 2,    (a).size.h     }} \
+            ? (n_GRect) { {  (a).origin.x + (a).size.w, (a).origin.y }, \
+                          { -(a).size.w,    (a).size.h     }} \
             /* switch horizontally and vertically */ \
-            : (n_GRect) { {  (a).origin.x + (a).size.w - 1, (a).origin.y + (a).size.h - 1 }, \
-                          { -(a).size.w + 2,   -(a).size.h + 2 }})
+            : (n_GRect) { {  (a).origin.x + (a).size.w, (a).origin.y + (a).size.h }, \
+                          { -(a).size.w,   -(a).size.h }})
 
 /*!
  * Returns the point at the center of a GRect (will prefer top and/or left

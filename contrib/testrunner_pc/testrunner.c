@@ -81,7 +81,7 @@ int main(int argc, char* argv[]) {
 
 	n_graphics_context_destroy(ctx);
 	free(framebuffer);
-	return 0;
+    return test_count != test_succeeded;
 }
 
 // error messages for the tests

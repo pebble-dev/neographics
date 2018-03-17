@@ -3,10 +3,10 @@
 // Test function implementations
 #undef NGFX_TEST
 #undef NGFX_BIG_TEST
-#define NGFX_TEST(module,name,code) NGFX_BIG_TEST(module, name, code)
-#define NGFX_BIG_TEST(module,name,code) \
+#define NGFX_TEST(module,name,...) NGFX_BIG_TEST(module, name, __VA_ARGS__)
+#define NGFX_BIG_TEST(module,name,...) \
     n_TestResult test_##module##_##name (void* _ngfxtest_context) { \
-        { code; } \
+        { __VA_ARGS__; } \
         return (n_TestResult) { \
             .success = true, \
             .file = __FILE__, \
@@ -19,7 +19,7 @@
 
 // Test metadata
 #undef NGFX_BIG_TEST
-#define NGFX_BIG_TEST(a_module,a_name,code) \
+#define NGFX_BIG_TEST(a_module,a_name,...) \
     (n_Test) { \
         .module = #a_module, \
         .name = #a_name, \
