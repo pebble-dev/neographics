@@ -98,8 +98,18 @@ target_compile_definitions(neographics_round PUBLIC)
 ###################################################################
 
 set(sources_test_neographics
-    contrib/test/testrunner.c
-    contrib/test/stb_impl.c
+	contrib/test/test.h
+	contrib/test/test.c
+	contrib/test/tests.h
+	
+	contrib/test/test_test.h
+	contrib/test/test_types.h
+
+	contrib/testrunner_pc/testrunner.h
+    contrib/testrunner_pc/testrunner.c
+	contrib/testrunner_pc/tests.c
+	contrib/testrunner_pc/utils.c
+    contrib/testrunner_pc/stb_impl.c
 )
 assign_source_group(${sources_test_neographics})
 
