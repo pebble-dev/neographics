@@ -71,12 +71,12 @@ int main(int argc, char* argv[]) {
         if (!success) {
             printf("    %s\n", result.message);
         }
-        setConsoleColor(NGFX_CONCOLOR_WHITE);
+        setConsoleColor(NGFX_CONCOLOR_NORMAL);
 
         current_test++;
     }
 
-    setConsoleColor(NGFX_CONCOLOR_WHITE);
+    setConsoleColor(NGFX_CONCOLOR_NORMAL);
     printf("\n%d / %d Tests succeeded\n", test_succeeded, test_count);
 
 	n_graphics_context_destroy(ctx);

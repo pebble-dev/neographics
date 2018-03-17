@@ -47,8 +47,14 @@ void saveFramebufferToPNG(n_GContext* ctx, const char* filename) {
 void setConsoleColor(ConsoleColor foreground) {
 #ifdef WIN32
     static HANDLE console = NULL;
+    static WORD normalAttributes;
     if (console == NULL) {
         console = GetStdHandle(STD_OUTPUT_HANDLE);
+        if (console != NULL) {
+            CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
+            GetConsoleScreenBufferInfo(console, &bufferInfo);
+            normalAttributes = bufferInfo.wAttributes;
+        }
     }
     if (console != NULL) {
         // We have a console handle, use that
@@ -60,9 +66,9 @@ void setConsoleColor(ConsoleColor foreground) {
             case NGFX_CONCOLOR_GREEN:
                 attributes = FOREGROUND_GREEN;
                 break;
-            case NGFX_CONCOLOR_WHITE:
+            case NGFX_CONCOLOR_NORMAL:
             default:
-                attributes = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED;
+                attributes = normalAttributes;
                 break;
         }
         SetConsoleTextAttribute(console, attributes);
@@ -71,20 +77,19 @@ void setConsoleColor(ConsoleColor foreground) {
     }
 #endif
     // if not try ANSI sequences
-    char colorSeq;
+    const char* sequence;
     switch (foreground) {
         case NGFX_CONCOLOR_RED:
-            colorSeq = 31;
+            sequence = "\x1B[31m";
             break;
         case NGFX_CONCOLOR_GREEN:
-            colorSeq = 32;
+            sequence = "\x1B[32m";
             break;
-        case NGFX_CONCOLOR_WHITE:
+        case NGFX_CONCOLOR_NORMAL:
         default:
-            colorSeq = 37;
+            sequence = "\x1B[0m";
             break;
     }
 
-    putchar(27); // ESC
-    putchar(colorSeq);
+    printf("%s", sequence);
 }
