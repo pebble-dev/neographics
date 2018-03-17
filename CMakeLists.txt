@@ -7,13 +7,13 @@ project (neographics)
 
 include(ExternalProject)
 ExternalProject_Add(
-	stb
-	GIT_REPOSITORY https://github.com/nothings/stb.git
-	GIT_TAG master
-	PREFIX ${CMAKE_CURRENT_BINARY_DIR}/stb
-	CONFIGURE_COMMAND ""
-	BUILD_COMMAND ""
-	INSTALL_COMMAND ""
+    stb
+    GIT_REPOSITORY https://github.com/nothings/stb.git
+    GIT_TAG master
+    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/stb
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
 )
 ExternalProject_Get_Property(stb source_dir)
 set(STB_SOURCE_DIR ${source_dir})
@@ -99,15 +99,15 @@ target_compile_definitions(neographics_round PUBLIC)
 ###################################################################
 
 set(sources_test_neographics
-	contrib/test/tests.h
-	contrib/test/test.h	
-	contrib/test/test_test.h
-	contrib/test/test_types.h
+    contrib/test/tests.h
+    contrib/test/test.h	
+    contrib/test/test_test.h
+    contrib/test/test_types.h
 
-	contrib/testrunner_pc/testrunner.h
+    contrib/testrunner_pc/testrunner.h
     contrib/testrunner_pc/testrunner.c
-	contrib/testrunner_pc/tests.c
-	contrib/testrunner_pc/utils.c
+    contrib/testrunner_pc/tests.c
+    contrib/testrunner_pc/utils.c
     contrib/testrunner_pc/stb_impl.c
 )
 assign_source_group(${sources_test_neographics})
