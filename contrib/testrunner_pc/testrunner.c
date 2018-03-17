@@ -7,7 +7,7 @@
 
 #define SCREEN_FRAMEBUFFER_SIZE __SCREEN_FRAMEBUFFER_ROW_BYTE_AMOUNT * __SCREEN_HEIGHT
 
-// Test runner context
+ // Test runner context
 #define ERROR_MESSAGE_BUFFER_SIZE 512
 
 typedef struct {
@@ -20,28 +20,28 @@ typedef struct {
 
 // Stubs to not anger the linker
 GBitmap* graphics_capture_frame_buffer(n_GContext* ctx) {
-	return NULL;
+    return NULL;
 }
 
 GBitmap* graphics_capture_frame_buffer_format(n_GContext* ctx, GBitmapFormat format) {
-	return NULL;
+    return NULL;
 }
 
 bool graphics_release_frame_buffer(n_GContext* ctx, GBitmap* bitmap) {
-	return false;
+    return false;
 }
 
 int main(int argc, char* argv[]) {
-	uint8_t* framebuffer = (uint8_t*)malloc(SCREEN_FRAMEBUFFER_SIZE);
-	if (framebuffer == NULL) {
-		fprintf(stderr, "Could not allocate framebuffer\n");
-		return 1;
-	}
-	n_GContext* ctx = n_graphics_context_from_buffer(framebuffer);
-	if (ctx == NULL) {
-		fprintf(stderr, "Could not create context\n");
-		return 1;
-	}
+    uint8_t* framebuffer = (uint8_t*)malloc(SCREEN_FRAMEBUFFER_SIZE);
+    if (framebuffer == NULL) {
+        fprintf(stderr, "Could not allocate framebuffer\n");
+        return 1;
+    }
+    n_GContext* ctx = n_graphics_context_from_buffer(framebuffer);
+    if (ctx == NULL) {
+        fprintf(stderr, "Could not create context\n");
+        return 1;
+    }
     TestRunnerContext* runner_context = (TestRunnerContext*)malloc(sizeof(TestRunnerContext));
     if (runner_context == NULL) {
         fprintf(stderr, "Could not create test runner context\n");
@@ -79,8 +79,8 @@ int main(int argc, char* argv[]) {
     setConsoleColor(NGFX_CONCOLOR_NORMAL);
     printf("\n%d / %d Tests succeeded\n", test_succeeded, test_count);
 
-	n_graphics_context_destroy(ctx);
-	free(framebuffer);
+    n_graphics_context_destroy(ctx);
+    free(framebuffer);
     return test_count != test_succeeded;
 }
 
