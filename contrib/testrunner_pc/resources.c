@@ -1,20 +1,20 @@
 #define _CRT_SECURE_NO_WARNINGS // Let me be POSIX
 #include "testrunner.h"
 
-#define TEST_RESSOURCE_DIR "test/ressources/"
+#define TEST_RESSOURCE_DIR "test/resources/"
 #define MAX_PATH_LEN 256
 
-void resetRessourceMapping() {
+void resetResourceMapping() {
     runner_context.res_mapping.count = 0;
 }
 
-const char* getRessourceNameById(uint32_t ressource_id) {
+const char* getResourceNameById(uint32_t resource_id) {
     TestRunnerContext* context = &runner_context;
     uint32_t* id_ptr = context->res_mapping.ids;
     uint32_t i;
 
     for (i = 0; i < context->res_mapping.count; i++) {
-        if (*id_ptr == ressource_id) {
+        if (*id_ptr == resource_id) {
             return context->res_mapping.names[i];
         }
     }
@@ -30,12 +30,12 @@ static void prv_ensureResMappingCapacity() {
         
         uint32_t* new_ids = (uint32_t*)realloc(context->res_mapping.ids, sizeof(uint32_t) * new_capacity);
         if (new_ids == NULL) {
-            fputs("Could not allocate ressource mapping ids", stderr);
+            fputs("Could not allocate resource mapping ids", stderr);
             exit(2);
         }
         const char** new_names = (const char**)realloc(context->res_mapping.names, sizeof(const char**) * new_capacity);
         if (new_names == NULL) {
-            fputs("Could not allocate ressource mapping names", stderr);
+            fputs("Could not allocate resource mapping names", stderr);
             exit(2);
         }
 
@@ -45,12 +45,12 @@ static void prv_ensureResMappingCapacity() {
     }
 }
 
-bool int_ngfxtest_map_ressource(const char* ressource_name, uint32_t ressource_id) {
+bool int_ngfxtest_map_resource(const char* resource_name, uint32_t resource_id) {
     TestRunnerContext* context = &runner_context;
 
     // Try to open file
     char filename[MAX_PATH_LEN];
-    snprintf(filename, MAX_PATH_LEN, "%s%s", TEST_RESSOURCE_DIR, ressource_name);
+    snprintf(filename, MAX_PATH_LEN, "%s%s", TEST_RESSOURCE_DIR, resource_name);
     FILE* fp = fopen(filename, "rb");
     if (fp == NULL) {
         return false;
@@ -60,22 +60,22 @@ bool int_ngfxtest_map_ressource(const char* ressource_name, uint32_t ressource_i
     // Search old entry
     uint32_t i;
     for (i = 0; i < context->res_mapping.count; i++) {
-        if (context->res_mapping.ids[i] == ressource_id) {
-            context->res_mapping.names[i] = ressource_name;
+        if (context->res_mapping.ids[i] == resource_id) {
+            context->res_mapping.names[i] = resource_name;
             return true;
         }
     }
 
     // Append new entry
     prv_ensureResMappingCapacity();
-    context->res_mapping.ids[i] = ressource_id;
-    context->res_mapping.names[i] = ressource_name;
+    context->res_mapping.ids[i] = resource_id;
+    context->res_mapping.names[i] = resource_name;
     context->res_mapping.count++;
     return true;
 }
 
 ResHandle resource_get_handle(uint32_t id) {
-    const char* name = getRessourceNameById(id);
+    const char* name = getResourceNameById(id);
     return (ResHandle)name;
 }
 

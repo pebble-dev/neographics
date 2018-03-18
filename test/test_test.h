@@ -32,7 +32,7 @@ NGFX_TEST(Test, FailRectAssert, {
 })
 
 NGFX_TEST(Test, SimpleResource, {
-    ngfxtest_map_ressource("test_helloworld.txt", 1);
+    ngfxtest_map_resource("test_helloworld.txt", 1);
     const char* const expected = "Hello World!";
 
     uint8_t buffer[64];
@@ -46,5 +46,5 @@ NGFX_TEST(Test, SimpleResource, {
 })
 
 NGFX_TEST(Test, FailNonExistantResource, {
-    ngfxtest_map_ressource("nonexist", 1);
+    ngfxtest_map_resource("nonexist", 1);
 })

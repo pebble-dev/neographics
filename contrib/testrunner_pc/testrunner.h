@@ -22,17 +22,17 @@ typedef struct {
     uint32_t capacity;
     uint32_t* ids;
     const char** names;
-} RessourceMapping;
+} ResourceMapping;
 
 typedef struct {
     const uint8_t* framebuffer;
     const n_GContext* context;
     n_GPoint error_coords;
-    RessourceMapping res_mapping;
+    ResourceMapping res_mapping;
     char message_buffer[ERROR_MESSAGE_BUFFER_SIZE];
     char message_buffer2[ERROR_MESSAGE_BUFFER_SIZE]; // to be used by ngfxtest_msg_xyz functions
 } TestRunnerContext;
 extern TestRunnerContext runner_context;
 
-void resetRessourceMapping();
-const char* getRessourceNameById( uint32_t ressource_id);
+void resetResourceMapping();
+const char* getResourceNameById( uint32_t resource_id);

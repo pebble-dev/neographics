@@ -120,41 +120,41 @@
     NGFX_ASSERT_PIXEL_MSG(point, expected_color, "%s", int_ngfxtest_msg_pixel(point, expected_color))
 
 /*!
- * Asserts that the current framebuffer area `rect` is equal to the resource image `expected_ressource` with custom message
- * \note `expected_ressource` is the id of a mapped ressource
+ * Asserts that the current framebuffer area `rect` is equal to the resource image `expected_resource` with custom message
+ * \note `expected_resource` is the id of a mapped resource
  */
-#define NGFX_ASSERT_SUBSCREEN_MSG(rect,expected_ressource,...) \
-    NGFX_ASSERT_MSG(int_ngfxtest_subscreen_eq(rect, expected_ressource), __VA_ARGS__)
+#define NGFX_ASSERT_SUBSCREEN_MSG(rect,expected_resource,...) \
+    NGFX_ASSERT_MSG(int_ngfxtest_subscreen_eq(rect, expected_resource), __VA_ARGS__)
 
  /*!
- * Asserts that the current framebuffer area `rect` is equal to the resource image `expected_ressource`
- * \note `expected_ressource` is the id of a mapped ressource
+ * Asserts that the current framebuffer area `rect` is equal to the resource image `expected_resource`
+ * \note `expected_resource` is the id of a mapped resource
  */
-#define NGFX_ASSERT_SUBSCREEN(rect,expected_ressource) \
-    NGFX_ASSERT_SUBSCREEN_MSG(rect, expected_ressource, "%s", int_ngfxtest_msg_subscreen(rect, expected_ressource_name))
+#define NGFX_ASSERT_SUBSCREEN(rect,expected_resource) \
+    NGFX_ASSERT_SUBSCREEN_MSG(rect, expected_resource, "%s", int_ngfxtest_msg_subscreen(rect, expected_resource_name))
 
  /*!
- * Asserts that the full current framebuffer is equal to the resource image `expected_ressource` with custom message
- * \note `expected_ressource` is the id of a mapped ressource
+ * Asserts that the full current framebuffer is equal to the resource image `expected_resource` with custom message
+ * \note `expected_resource` is the id of a mapped resource
  */
-#define NGFX_ASSERT_SCREEN_MSG(expected_ressource,...) \
-    NGFX_ASSERT_SUBSCREEN_MSG((n_GRect){ 0, 0, __SCREEN_WIDTH, __SCREEN_HEIGHT }, expected_ressource, __VA_ARGS__)
+#define NGFX_ASSERT_SCREEN_MSG(expected_resource,...) \
+    NGFX_ASSERT_SUBSCREEN_MSG((n_GRect){ 0, 0, __SCREEN_WIDTH, __SCREEN_HEIGHT }, expected_resource, __VA_ARGS__)
 
  /*!
- * Asserts that the full current framebuffer is equal to the resource image `expected_ressource`
- * \note `expected_ressource` is the id of a mapped ressource
+ * Asserts that the full current framebuffer is equal to the resource image `expected_resource`
+ * \note `expected_resource` is the id of a mapped resource
  */
-#define NGFX_ASSERT_SCREEN(expected_ressource) \
+#define NGFX_ASSERT_SCREEN(expected_resource) \
     NGFX_ASSERT_SCREEN_MSG(expected_resource, "%s", int_ngfxtest_msg_subscreen(rect, expected_resource))
 
-// Ressources
+// Resources
 
 /*!
- * Maps a ressource to a specific ressource id (can overwrite old mappings)
+ * Maps a resource to a specific resource id (can overwrite old mappings)
  */
-#define ngfxtest_map_ressource(ressource_name,ressource_id)  \
-    NGFX_ASSERT_MSG(int_ngfxtest_map_ressource((ressource_name), (ressource_id)), \
-        "Could not load ressource \"" ressource_name "\"")
+#define ngfxtest_map_resource(resource_name,resource_id)  \
+    NGFX_ASSERT_MSG(int_ngfxtest_map_resource((resource_name), (resource_id)), \
+        "Could not load resource \"" resource_name "\"")
 
 /*! @}
  */
@@ -162,13 +162,13 @@
 // Internal (do not use in tests)
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 bool int_ngfxtest_pixel_eq(n_GPoint point, n_GColor expected_color);
-bool int_ngfxtest_subscreen_eq(n_GRect rect, uint32_t expected_ressource_id);
+bool int_ngfxtest_subscreen_eq(n_GRect rect, uint32_t expected_resource_id);
 
 const char* int_ngfxtest_format_msg(const char* format, ...);
 const char* int_ngfxtest_msg_pixel(n_GPoint point, n_GColor expected_color);
-const char* int_ngfxtest_msg_subscreen(n_GRect rect, uint32_t expected_ressource_id);
+const char* int_ngfxtest_msg_subscreen(n_GRect rect, uint32_t expected_resource_id);
 
-bool int_ngfxtest_map_ressource(const char* ressource_name, uint32_t ressource_id);
+bool int_ngfxtest_map_resource(const char* resource_name, uint32_t resource_id);
 
 typedef struct {
     bool success;

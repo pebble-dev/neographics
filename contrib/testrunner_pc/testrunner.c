@@ -92,7 +92,7 @@ bool int_ngfxtest_pixel_eq(n_GPoint point, n_GColor expected_color) {
     return actual.argb == expected_color.argb;
 }
 
-bool int_ngfxtest_subscreen_eq(n_GRect rect, uint32_t expected_ressource_id) {
+bool int_ngfxtest_subscreen_eq(n_GRect rect, uint32_t expected_resource_id) {
     return false;
 }
 
@@ -119,6 +119,6 @@ const char* int_ngfxtest_msg_pixel(n_GPoint point, n_GColor expected) {
     return runner_context.message_buffer2;
 }
 
-const char* int_ngfxtest_msg_subscreen(n_GRect rect, uint32_t expected_ressource_id) {
+const char* int_ngfxtest_msg_subscreen(n_GRect rect, uint32_t expected_resource_id) {
     return "Not implemented yet";
 }
