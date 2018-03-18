@@ -32,6 +32,7 @@ typedef struct {
     char message_buffer[ERROR_MESSAGE_BUFFER_SIZE];
     char message_buffer2[ERROR_MESSAGE_BUFFER_SIZE]; // to be used by ngfxtest_msg_xyz functions
 } TestRunnerContext;
+extern TestRunnerContext runner_context;
 
-void resetRessourceMapping(TestRunnerContext* context);
-const char* getRessourceNameById(TestRunnerContext* context, uint32_t ressource_id);
+void resetRessourceMapping();
+const char* getRessourceNameById( uint32_t ressource_id);

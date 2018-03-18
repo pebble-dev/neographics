@@ -99,10 +99,10 @@ target_compile_definitions(neographics_round PUBLIC)
 ###################################################################
 
 set(sources_test_neographics
-    contrib/test/tests.h
-    contrib/test/test.h	
-    contrib/test/test_test.h
-    contrib/test/test_types.h
+    test/tests.h
+    test/test.h	
+    test/test_test.h
+    test/test_types.h
 
     contrib/testrunner_pc/testrunner.h
     contrib/testrunner_pc/testrunner.c

@@ -5,7 +5,7 @@
 #undef NGFX_BIG_TEST
 #define NGFX_TEST(module,name,...) NGFX_BIG_TEST(module, name, __VA_ARGS__)
 #define NGFX_BIG_TEST(module,name,...) \
-    n_TestResult test_##module##_##name (void* _ngfxtest_context) { \
+    n_TestResult test_##module##_##name (void) { \
         { __VA_ARGS__; } \
         return (n_TestResult) { \
             .success = true, \
