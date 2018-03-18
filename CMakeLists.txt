@@ -107,6 +107,7 @@ set(sources_test_neographics
     contrib/testrunner_pc/testrunner.h
     contrib/testrunner_pc/testrunner.c
     contrib/testrunner_pc/tests.c
+	contrib/testrunner_pc/ressources.c
     contrib/testrunner_pc/utils.c
     contrib/testrunner_pc/stb_impl.c
 )

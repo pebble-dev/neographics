@@ -5,19 +5,6 @@
 #include <stdarg.h>
 #include <graphics.h>
 
-#define SCREEN_FRAMEBUFFER_SIZE __SCREEN_FRAMEBUFFER_ROW_BYTE_AMOUNT * __SCREEN_HEIGHT
-
- // Test runner context
-#define ERROR_MESSAGE_BUFFER_SIZE 512
-
-typedef struct {
-    const uint8_t* framebuffer;
-    const n_GContext* context;
-    n_GPoint error_coords;
-    char message_buffer[ERROR_MESSAGE_BUFFER_SIZE];
-    char message_buffer2[ERROR_MESSAGE_BUFFER_SIZE]; // to be used by ngfxtest_msg_xyz functions
-} TestRunnerContext;
-
 // Stubs to not anger the linker
 GBitmap* graphics_capture_frame_buffer(n_GContext* ctx) {
     return NULL;
@@ -35,18 +22,21 @@ int main(int argc, char* argv[]) {
     uint8_t* framebuffer = (uint8_t*)malloc(SCREEN_FRAMEBUFFER_SIZE);
     if (framebuffer == NULL) {
         fprintf(stderr, "Could not allocate framebuffer\n");
-        return 1;
+        return 2;
     }
     n_GContext* ctx = n_graphics_context_from_buffer(framebuffer);
     if (ctx == NULL) {
         fprintf(stderr, "Could not create context\n");
-        return 1;
+        return 2;
     }
     TestRunnerContext* runner_context = (TestRunnerContext*)malloc(sizeof(TestRunnerContext));
     if (runner_context == NULL) {
         fprintf(stderr, "Could not create test runner context\n");
-        return 1;
+        return 2;
     }
+    memset(runner_context, 0, sizeof(TestRunnerContext));
+    runner_context->framebuffer = framebuffer;
+    runner_context->context = ctx;
 
     // Run the tests
     uint32_t test_count = 0, test_succeeded = 0;
@@ -106,7 +96,7 @@ bool ngfxtest_pixel_eq(void* context, n_GPoint point, n_GColor expected_color) {
     return actual.argb == expected_color.argb;
 }
 
-bool ngfxtest_subscreen_eq(void* context, n_GRect rect, const char* expected_ressource_name) {
+bool ngfxtest_subscreen_eq(void* context, n_GRect rect, uint32_t expected_ressource_id) {
     return false;
 }
 
@@ -135,6 +125,6 @@ const char* ngfxtest_msg_pixel(void* context, n_GPoint point, n_GColor expected)
     return runner_context->message_buffer2;
 }
 
-const char* ngfxtest_msg_subscreen(void* context, n_GRect rect, const char* expected_ressource_name) {
+const char* ngfxtest_msg_subscreen(void* context, n_GRect rect, uint32_t expected_ressource_id) {
     return "Not implemented yet";
 }
