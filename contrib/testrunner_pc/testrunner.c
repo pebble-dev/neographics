@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
             strstr(current_test->name, "Fail") == current_test->name;
 
         test_count++;
-        n_TestResult result = current_test->func();
+        n_TestResult result = current_test->func(framebuffer, ctx);
         bool success = (should_fail && !result.success) || (!should_fail && result.success);
         if (success) {
             test_succeeded++;
@@ -80,7 +80,7 @@ n_GColor ngfxtest_get_pixel(n_GPoint point) {
     return (runner_context.framebuffer[byteIndex] & bitMask) ? n_GColorWhite : n_GColorBlack;
 #else
     uint32_t index = point.y * __SCREEN_FRAMEBUFFER_ROW_BYTE_AMOUNT + point.x;
-    return (n_GColor) { .argb = runner_context.framebuffer[index] };
+    return (n_GColor) { .argb = runner_context.framebuffer[index] | 0b11000000 }; // the screen is always opaque
 #endif
 }
 
@@ -89,11 +89,61 @@ bool int_ngfxtest_pixel_eq(n_GPoint point, n_GColor expected_color) {
         return false;
     }
     n_GColor actual = ngfxtest_get_pixel(point);
+    actual.a = 3;
     return actual.argb == expected_color.argb;
 }
 
 bool int_ngfxtest_subscreen_eq(n_GRect rect, uint32_t expected_resource_id) {
-    return false;
+    // Check bounds
+    if (rect.origin.x < 0 || rect.origin.y < 0 || rect.size.w <= 0 || rect.size.h <= 0 ||
+        rect.origin.x + rect.size.w > __SCREEN_WIDTH ||
+        rect.origin.y + rect.size.h > __SCREEN_HEIGHT) {
+        snprintf(runner_context.message_buffer2, ERROR_MESSAGE_BUFFER_SIZE,
+            "Subscreen rect out of bounds: (GRect){%d, %d, %d, %d}",
+            rect.origin.x, rect.origin.y, rect.size.w, rect.size.h);
+        return false;
+    }
+
+    // Load image
+    const char* res_name = getResourceNameById(expected_resource_id);
+    if (res_name == NULL) {
+        snprintf(runner_context.message_buffer2, ERROR_MESSAGE_BUFFER_SIZE,
+            "Unmapped expected resource id: %d", expected_resource_id);
+        return false;
+    }
+    ResImage* expected_img = loadImageByName(res_name);
+    if (expected_img == NULL) {
+        snprintf(runner_context.message_buffer2, ERROR_MESSAGE_BUFFER_SIZE,
+            "Could not load expected resource image: %s", res_name);
+        return false;
+    }
+    if (expected_img->width != rect.size.w || expected_img->height != rect.size.h) {
+        snprintf(runner_context.message_buffer2, ERROR_MESSAGE_BUFFER_SIZE,
+            "Wrong expected resource image size.\n    Requested: (GSize){%d, %d} \tResource: (GSize){%d, %d}",
+            rect.size.w, rect.size.h, expected_img->width, expected_img->height);
+        free(expected_img);
+        return false;
+    }
+
+    // Compare
+    int16_t x, y;
+    for (y = 0; y < rect.size.h; y++) {
+        for (x = 0; x < rect.size.w; x++) {
+            n_GPoint point = n_GPoint(rect.origin.x + x, rect.origin.y + y);
+            n_GColor actual = ngfxtest_get_pixel(point);
+            n_GColor expected = expected_img->pixels[y * expected_img->width + x];
+            if (actual.argb != expected.argb) {
+                snprintf(runner_context.message_buffer2, ERROR_MESSAGE_BUFFER_SIZE,
+                    "Screen pixel value at (GPoint){%d, %d} unexpected.\n    Actual: (GColor){%d, %d, %d, %d} \tExpected: (GColor){%d, %d, %d, %d}",
+                    point.x, point.y, actual.r, actual.g, actual.b, actual.a, expected.r, expected.g, expected.b, expected.a);
+                free(expected_img);
+                return false;
+            }
+        }
+    }
+
+    free(expected_img);
+    return true;
 }
 
 const char* int_ngfxtest_format_msg(const char* format, ...) {
@@ -120,5 +170,5 @@ const char* int_ngfxtest_msg_pixel(n_GPoint point, n_GColor expected) {
 }
 
 const char* int_ngfxtest_msg_subscreen(n_GRect rect, uint32_t expected_resource_id) {
-    return "Not implemented yet";
+    return runner_context.message_buffer2;
 }

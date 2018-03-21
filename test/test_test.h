@@ -1,4 +1,5 @@
 #include "test.h"
+#include "common.h"
 
 NGFX_TEST(Test, EmptyTest, {
 })
@@ -47,4 +48,78 @@ NGFX_TEST(Test, SimpleResource, {
 
 NGFX_TEST(Test, FailNonExistantResource, {
     ngfxtest_map_resource("nonexist", 1);
+})
+
+NGFX_TEST(Test, ScreenAssert, {
+    ngfxtest_map_resource("test_checker_full.png", 1);
+    
+    n_graphics_set_pixel(context, n_GPoint(80, 80), n_GColorWhite);
+    n_graphics_set_pixel(context, n_GPoint(81, 80), n_GColorBlack);
+#ifdef PBL_BW
+    n_graphics_set_pixel(context, n_GPoint(80, 81), n_GColorBlack);
+    n_graphics_set_pixel(context, n_GPoint(81, 81), n_GColorWhite);
+#else
+    n_graphics_set_pixel(context, n_GPoint(80, 81), n_GColorRed);
+    n_graphics_set_pixel(context, n_GPoint(81, 81), n_GColorGreen);
+#endif
+
+    NGFX_ASSERT_SCREEN(1);
+})
+
+NGFX_TEST(Test, SubScreenAssert, {
+    ngfxtest_map_resource("test_checker.png", 1);
+    
+    n_graphics_set_pixel(context, n_GPoint(80, 80), n_GColorWhite);
+    n_graphics_set_pixel(context, n_GPoint(81, 80), n_GColorBlack);
+#ifdef PBL_BW
+    n_graphics_set_pixel(context, n_GPoint(80, 81), n_GColorBlack);
+    n_graphics_set_pixel(context, n_GPoint(81, 81), n_GColorWhite);
+#else
+    n_graphics_set_pixel(context, n_GPoint(80, 81), n_GColorRed);
+    n_graphics_set_pixel(context, n_GPoint(81, 81), n_GColorGreen);
+#endif
+
+    NGFX_ASSERT_SUBSCREEN(n_GRect(80, 80, 2, 2), 1);
+})
+
+NGFX_TEST(Test, FailScreenOutOfBounds, {
+    ngfxtest_map_resource("test_checker.png", 1);
+    
+    n_graphics_set_pixel(context, n_GPoint(80, 80), n_GColorWhite);
+    n_graphics_set_pixel(context, n_GPoint(81, 80), n_GColorBlack);
+#ifdef PBL_BW
+    n_graphics_set_pixel(context, n_GPoint(80, 81), n_GColorBlack);
+    n_graphics_set_pixel(context, n_GPoint(81, 81), n_GColorWhite);
+#else
+    n_graphics_set_pixel(context, n_GPoint(80, 81), n_GColorRed);
+    n_graphics_set_pixel(context, n_GPoint(81, 81), n_GColorGreen);
+#endif
+
+    NGFX_ASSERT_SUBSCREEN(n_GRect(-1, -1, 900, 900), 1);
+})
+
+NGFX_TEST(Test, FailScreenUnmapped, {
+    NGFX_ASSERT_SUBSCREEN(n_GRect(0, 0, 2, 2), 1);
+})
+
+NGFX_TEST(Test, FailScreenImageSize, {
+    ngfxtest_map_resource("test_checker.png", 1);
+    
+    n_graphics_set_pixel(context, n_GPoint(80, 80), n_GColorWhite);
+    n_graphics_set_pixel(context, n_GPoint(81, 80), n_GColorBlack);
+#ifdef PBL_BW
+    n_graphics_set_pixel(context, n_GPoint(80, 81), n_GColorBlack);
+    n_graphics_set_pixel(context, n_GPoint(81, 81), n_GColorWhite);
+#else
+    n_graphics_set_pixel(context, n_GPoint(80, 81), n_GColorRed);
+    n_graphics_set_pixel(context, n_GPoint(81, 81), n_GColorGreen);
+#endif
+
+    NGFX_ASSERT_SUBSCREEN(n_GRect(80, 80, 5, 5), 1);
+})
+
+NGFX_TEST(Test, FailScreenWrongColor, {
+    ngfxtest_map_resource("test_checker.png", 1);
+
+    NGFX_ASSERT_SUBSCREEN(n_GRect(0, 0, 2, 2), 1);
 })

@@ -9,11 +9,17 @@
 
 /*!
  * Declares a new test with small footprint.
+ * \see NGFX_BIG_TEST
  */
 #define NGFX_TEST(module,name,...)
 
 /*!
  * Declares a new test with big footprint.
+ * \note After name you open a code block with curly braces and write your test
+ * code in that block, you have two global variables to draw stuff which can be
+ * compared:
+ * 1. `framebuffer` is a `uint8_t` pointer to the raw framebuffer data
+ * 2. `context` is a `n_GContext` pointer
  */
 #define NGFX_BIG_TEST(module,name,...)
 
@@ -131,21 +137,22 @@
  * \note `expected_resource` is the id of a mapped resource
  */
 #define NGFX_ASSERT_SUBSCREEN(rect,expected_resource) \
-    NGFX_ASSERT_SUBSCREEN_MSG(rect, expected_resource, "%s", int_ngfxtest_msg_subscreen(rect, expected_resource_name))
+    NGFX_ASSERT_SUBSCREEN_MSG(rect, expected_resource, "%s", int_ngfxtest_msg_subscreen(rect, expected_resource))
 
  /*!
  * Asserts that the full current framebuffer is equal to the resource image `expected_resource` with custom message
  * \note `expected_resource` is the id of a mapped resource
  */
 #define NGFX_ASSERT_SCREEN_MSG(expected_resource,...) \
-    NGFX_ASSERT_SUBSCREEN_MSG((n_GRect){ 0, 0, __SCREEN_WIDTH, __SCREEN_HEIGHT }, expected_resource, __VA_ARGS__)
+    NGFX_ASSERT_SUBSCREEN_MSG(n_GRect(0, 0, __SCREEN_WIDTH, __SCREEN_HEIGHT), expected_resource, __VA_ARGS__)
 
  /*!
  * Asserts that the full current framebuffer is equal to the resource image `expected_resource`
  * \note `expected_resource` is the id of a mapped resource
  */
 #define NGFX_ASSERT_SCREEN(expected_resource) \
-    NGFX_ASSERT_SCREEN_MSG(expected_resource, "%s", int_ngfxtest_msg_subscreen(rect, expected_resource))
+    NGFX_ASSERT_SCREEN_MSG(expected_resource, "%s", int_ngfxtest_msg_subscreen( \
+        n_GRect(0, 0, __SCREEN_WIDTH, __SCREEN_HEIGHT), expected_resource))
 
 // Resources
 
@@ -177,7 +184,7 @@ typedef struct {
     unsigned int line;
 } n_TestResult;
 
-typedef n_TestResult (*n_TestFunction)(void);
+typedef n_TestResult (*n_TestFunction)(uint8_t* const framebuffer, struct n_GContext* const context);
 
 typedef struct {
     const char* module;
