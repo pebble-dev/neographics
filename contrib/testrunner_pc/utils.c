@@ -4,12 +4,12 @@
 #include <stb_image.h>
 #include <stb_image_write.h>
 
-void saveFramebufferToPNG(n_GContext* ctx, const char* filename) {
+void saveFramebufferToPNG(n_GContext *ctx, const char *filename) {
     static uint8_t color_framebuffer[__SCREEN_WIDTH * __SCREEN_HEIGHT * 4]; // ugly, but hey we are on PC now
-    uint8_t* outColorPtr = color_framebuffer;
+    uint8_t *outColorPtr = color_framebuffer;
 
 #ifdef PBL_BW
-    uint8_t* fbColorPtr, *fbLinePtr = ctx->fbuf;
+    uint8_t *fbColorPtr, *fbLinePtr = ctx->fbuf;
     for (uint32_t y = 0; y < __SCREEN_HEIGHT; y++) {
         fbColorPtr = fbLinePtr;
         for (uint32_t x = 0; x < __SCREEN_WIDTH / 8; x++) {
@@ -25,7 +25,7 @@ void saveFramebufferToPNG(n_GContext* ctx, const char* filename) {
     }
 #else
     uint32_t byteCount = __SCREEN_FRAMEBUFFER_ROW_BYTE_AMOUNT * __SCREEN_HEIGHT;
-    n_GColor* fbColorPtr = (n_GColor*)ctx->fbuf;
+    n_GColor *fbColorPtr = (n_GColor*)ctx->fbuf;
     while (--byteCount) {
         outColorPtr[0] = fbColorPtr->r * 85;
         outColorPtr[1] = fbColorPtr->g * 85;
@@ -77,7 +77,7 @@ void setConsoleColor(ConsoleColor foreground) {
     }
 #endif
     // if not try ANSI sequences
-    const char* sequence;
+    const char *sequence;
     switch (foreground) {
         case NGFX_CONCOLOR_RED:
             sequence = "\x1B[31m";

@@ -8,25 +8,25 @@
 TestRunnerContext runner_context;
 
 // Stubs to not anger the linker
-GBitmap* graphics_capture_frame_buffer(n_GContext* ctx) {
+GBitmap *graphics_capture_frame_buffer(n_GContext *ctx) {
     return NULL;
 }
 
-GBitmap* graphics_capture_frame_buffer_format(n_GContext* ctx, GBitmapFormat format) {
+GBitmap *graphics_capture_frame_buffer_format(n_GContext *ctx, GBitmapFormat format) {
     return NULL;
 }
 
-bool graphics_release_frame_buffer(n_GContext* ctx, GBitmap* bitmap) {
+bool graphics_release_frame_buffer(n_GContext *ctx, GBitmap *bitmap) {
     return false;
 }
 
-int main(int argc, char* argv[]) {
-    uint8_t* framebuffer = (uint8_t*)malloc(SCREEN_FRAMEBUFFER_SIZE);
+int main(int argc, char *argv[]) {
+    uint8_t *framebuffer = (uint8_t*)malloc(SCREEN_FRAMEBUFFER_SIZE);
     if (framebuffer == NULL) {
         fprintf(stderr, "Could not allocate framebuffer\n");
         return 2;
     }
-    n_GContext* ctx = n_graphics_context_from_buffer(framebuffer);
+    n_GContext *ctx = n_graphics_context_from_buffer(framebuffer);
     if (ctx == NULL) {
         fprintf(stderr, "Could not create context\n");
         return 2;
@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
 
     // Run the tests
     uint32_t test_count = 0, test_succeeded = 0;
-    const n_Test* current_test = tests;
+    const n_Test *current_test = tests;
     while (current_test->func != NULL) {
         memset(framebuffer, 0, SCREEN_FRAMEBUFFER_SIZE);
         bool should_fail = strcmp(current_test->module, "Test") == 0 &&
@@ -105,13 +105,13 @@ bool int_ngfxtest_subscreen_eq(n_GRect rect, uint32_t expected_resource_id) {
     }
 
     // Load image
-    const char* res_name = getResourceNameById(expected_resource_id);
+    const char *res_name = getResourceNameById(expected_resource_id);
     if (res_name == NULL) {
         snprintf(runner_context.message_buffer2, ERROR_MESSAGE_BUFFER_SIZE,
             "Unmapped expected resource id: %d", expected_resource_id);
         return false;
     }
-    ResImage* expected_img = loadImageByName(res_name);
+    ResImage *expected_img = loadImageByName(res_name);
     if (expected_img == NULL) {
         snprintf(runner_context.message_buffer2, ERROR_MESSAGE_BUFFER_SIZE,
             "Could not load expected resource image: %s", res_name);
@@ -146,7 +146,7 @@ bool int_ngfxtest_subscreen_eq(n_GRect rect, uint32_t expected_resource_id) {
     return true;
 }
 
-const char* int_ngfxtest_format_msg(const char* format, ...) {
+const char *int_ngfxtest_format_msg(const char *format, ...) {
     va_list args;
     va_start(args, format);
     vsnprintf(runner_context.message_buffer, ERROR_MESSAGE_BUFFER_SIZE, format, args);
@@ -154,7 +154,7 @@ const char* int_ngfxtest_format_msg(const char* format, ...) {
     return runner_context.message_buffer;
 }
 
-const char* int_ngfxtest_msg_pixel(n_GPoint point, n_GColor expected) {
+const char *int_ngfxtest_msg_pixel(n_GPoint point, n_GColor expected) {
     if (point.x < 0 || point.y < 0 || point.x >= __SCREEN_WIDTH || point.y >= __SCREEN_HEIGHT) {
         snprintf(runner_context.message_buffer2, ERROR_MESSAGE_BUFFER_SIZE,
             "Pixel coord out of bounds: (GPoint){%d, %d}",
@@ -169,6 +169,6 @@ const char* int_ngfxtest_msg_pixel(n_GPoint point, n_GColor expected) {
     return runner_context.message_buffer2;
 }
 
-const char* int_ngfxtest_msg_subscreen(n_GRect rect, uint32_t expected_resource_id) {
+const char *int_ngfxtest_msg_subscreen(n_GRect rect, uint32_t expected_resource_id) {
     return runner_context.message_buffer2;
 }

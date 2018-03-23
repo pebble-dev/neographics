@@ -21,7 +21,7 @@ int32_t sin_lookup(int32_t angle);
 int32_t cos_lookup(int32_t angle);
 
 // Resource
-typedef void* ResHandle;
+typedef void *ResHandle;
 
 size_t resource_size(ResHandle handle);
 ResHandle resource_get_handle(uint32_t id);
