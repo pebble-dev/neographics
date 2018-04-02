@@ -7,13 +7,13 @@ project (neographics)
 
 include(ExternalProject)
 ExternalProject_Add(
-	stb
-	GIT_REPOSITORY https://github.com/nothings/stb.git
-	GIT_TAG master
-	PREFIX ${CMAKE_CURRENT_BINARY_DIR}/stb
-	CONFIGURE_COMMAND ""
-	BUILD_COMMAND ""
-	INSTALL_COMMAND ""
+    stb
+    GIT_REPOSITORY https://github.com/nothings/stb.git
+    GIT_TAG master
+    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/stb
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
 )
 ExternalProject_Get_Property(stb source_dir)
 set(STB_SOURCE_DIR ${source_dir})
@@ -25,6 +25,7 @@ set(STB_SOURCE_DIR ${source_dir})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/bin)
+enable_testing()
 
 function(assign_source_group)
     foreach(_source IN ITEMS ${ARGN})
@@ -98,8 +99,17 @@ target_compile_definitions(neographics_round PUBLIC)
 ###################################################################
 
 set(sources_test_neographics
-    contrib/test/testrunner.c
-    contrib/test/stb_impl.c
+    test/tests.h
+    test/test.h	
+    test/test_test.h
+    test/test_types.h
+
+    contrib/testrunner_pc/testrunner.h
+    contrib/testrunner_pc/testrunner.c
+    contrib/testrunner_pc/tests.c
+	contrib/testrunner_pc/resources.c
+    contrib/testrunner_pc/utils.c
+    contrib/testrunner_pc/stb_impl.c
 )
 assign_source_group(${sources_test_neographics})
 
@@ -108,15 +118,30 @@ target_link_libraries(test_neographics_rect neographics_rect)
 target_compile_definitions(neographics_rect PUBLIC PBL_TYPE=rect PBL_RECT=1)
 target_include_directories(neographics_rect PUBLIC "src" ${STB_SOURCE_DIR})
 add_dependencies(neographics_rect stb)
+add_test(
+	NAME test_neographics_rect
+	COMMAND ${CMAKE_BINARY_DIR}/bin/test_neographics_rect
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)
 
 add_executable(test_neographics_rect_bw ${sources_test_neographics} )
 target_link_libraries(test_neographics_rect_bw neographics_rect_bw)
 target_compile_definitions(neographics_rect_bw PUBLIC PBL_TYPE=rect_bw PBL_RECT=1 PBL_BW=1)
 target_include_directories(neographics_rect_bw PUBLIC "src" ${STB_SOURCE_DIR})
 add_dependencies(neographics_rect_bw stb)
+add_test(
+	NAME test_neographics_rect_bw
+	COMMAND ${CMAKE_BINARY_DIR}/bin/test_neographics_rect_bw
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)
 
 add_executable(test_neographics_round ${sources_test_neographics} )
 target_link_libraries(test_neographics_round neographics_round)
 target_compile_definitions(neographics_round PUBLIC PBL_TYPE=round)
 target_include_directories(neographics_round PUBLIC "src" ${STB_SOURCE_DIR})
 add_dependencies(neographics_round stb)
+add_test(
+	NAME test_neographics_round
+	COMMAND ${CMAKE_BINARY_DIR}/bin/test_neographics_round
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)
