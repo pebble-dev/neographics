@@ -123,3 +123,20 @@ NGFX_TEST(Test, FailScreenWrongColor, {
 
     NGFX_ASSERT_SUBSCREEN(n_GRect(0, 0, 2, 2), 1);
 })
+
+NGFX_TEST(Test, LoadImage,
+    n_GColor expected[] = {
+#ifdef PBL_BW
+        n_GColorWhite, n_GColorBlack, n_GColorBlack, n_GColorWhite
+#else
+        n_GColorWhite, n_GColorBlack, n_GColorRed, n_GColorGreen
+#endif
+    };
+    ngfxtest_map_resource("test_checker.png", 1);
+    ngfxtest_load_image(checker, 1);
+
+    NGFX_ASSERT_SIZE(checker->raw_bitmap_size, ((n_GSize) { 2, 2 }));
+    NGFX_ASSERT_RECT(checker->bounds, n_GRect(0, 0, 2, 2));
+    NGFX_ASSERT_EQ(checker->format, n_GBitmapFormat8Bit);
+    NGFX_ASSERT_MSG(memcmp(checker->addr, expected, 4) == 0, "Image data does not match");
+)

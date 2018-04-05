@@ -3,7 +3,6 @@
  */
 #include "testrunner.h"
 #include <stdarg.h>
-#include <graphics.h>
 
 TestRunnerContext runner_context;
 
@@ -60,6 +59,7 @@ int main(int argc, char *argv[]) {
         }
         setConsoleColor(NGFX_CONCOLOR_NORMAL);
 
+        resetResourceMapping();
         current_test++;
     }
 
@@ -111,16 +111,16 @@ bool int_ngfxtest_subscreen_eq(n_GRect rect, uint32_t expected_resource_id) {
             "Unmapped expected resource id: %d", expected_resource_id);
         return false;
     }
-    ResImage *expected_img = loadImageByName(res_name);
+    n_GBitmap *expected_img = loadImageByName(res_name);
     if (expected_img == NULL) {
         snprintf(runner_context.message_buffer2, ERROR_MESSAGE_BUFFER_SIZE,
             "Could not load expected resource image: %s", res_name);
         return false;
     }
-    if (expected_img->width != rect.size.w || expected_img->height != rect.size.h) {
+    if (expected_img->bounds.size.w != rect.size.w || expected_img->bounds.size.h != rect.size.h) {
         snprintf(runner_context.message_buffer2, ERROR_MESSAGE_BUFFER_SIZE,
             "Wrong expected resource image size.\n    Requested: (GSize){%d, %d} \tResource: (GSize){%d, %d}",
-            rect.size.w, rect.size.h, expected_img->width, expected_img->height);
+            rect.size.w, rect.size.h, expected_img->bounds.size.w, expected_img->bounds.size.h);
         free(expected_img);
         return false;
     }
@@ -131,7 +131,7 @@ bool int_ngfxtest_subscreen_eq(n_GRect rect, uint32_t expected_resource_id) {
         for (x = 0; x < rect.size.w; x++) {
             n_GPoint point = n_GPoint(rect.origin.x + x, rect.origin.y + y);
             n_GColor actual = ngfxtest_get_pixel(point);
-            n_GColor expected = expected_img->pixels[y * expected_img->width + x];
+            n_GColor expected = (n_GColor)expected_img->addr[y * expected_img->bounds.size.w + x];
             if (actual.argb != expected.argb) {
                 snprintf(runner_context.message_buffer2, ERROR_MESSAGE_BUFFER_SIZE,
                     "Screen pixel value at (GPoint){%d, %d} unexpected.\n    Actual: (GColor){%d, %d, %d, %d} \tExpected: (GColor){%d, %d, %d, %d}",

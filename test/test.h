@@ -163,6 +163,14 @@
     NGFX_ASSERT_MSG(int_ngfxtest_map_resource((resource_name), (resource_id)), \
         "Could not load resource \"" resource_name "\"")
 
+/*!
+ * Loads a mapped resource as a const GBitmap (always 8Bit) into a new local variable
+ * It should not be freed by the test
+ */
+#define ngfxtest_load_image(variable_name, resource_id) \
+    const struct n_GBitmap* const variable_name = int_ngfxtest_load_image((resource_id)); \
+    NGFX_ASSERT_MSG((variable_name != NULL), "Could not load image from resource " #resource_id)
+
 /*! @}
  */
 
@@ -176,6 +184,7 @@ const char* int_ngfxtest_msg_pixel(n_GPoint point, n_GColor expected_color);
 const char* int_ngfxtest_msg_subscreen(n_GRect rect, uint32_t expected_resource_id);
 
 bool int_ngfxtest_map_resource(const char* resource_name, uint32_t resource_id);
+const struct n_GBitmap* int_ngfxtest_load_image(uint32_t resource_id);
 
 typedef struct {
     bool success;

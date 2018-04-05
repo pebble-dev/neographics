@@ -6,7 +6,15 @@
 #define MAX_PATH_LEN 256
 
 void resetResourceMapping() {
+    int i;
     runner_context.res_mapping.count = 0;
+
+    for (i = 0; i < MAX_LOADED_IMAGES; i++) {
+        if (runner_context.images[i] != NULL) {
+            free(runner_context.images[i]);
+            runner_context.images[i] = NULL;
+        }
+    }
 }
 
 const char *getResourceNameById(uint32_t resource_id) {
@@ -122,12 +130,29 @@ size_t resource_load(ResHandle handle, uint8_t *buffer, size_t max_length) {
     return size_read;
 }
 
-ResImage *loadImageById(uint32_t resource_id) {
+const n_GBitmap *int_ngfxtest_load_image(uint32_t resource_id) {
+    n_GBitmap* result = loadImageById(resource_id);
+    if (result == NULL)
+        return NULL;
+
+    int i = 0;
+    for (; i < MAX_LOADED_IMAGES; i++) {
+        if (runner_context.images[i] == NULL) {
+            runner_context.images[i] = result;
+            return result;
+        }
+    }
+
+    free(result);
+    return NULL;
+}
+
+n_GBitmap *loadImageById(uint32_t resource_id) {
     const char *name = getResourceNameById(resource_id);
     return name == NULL ? NULL : loadImageByName(name);
 }
 
-ResImage *loadImageByName(const char *name) {
+n_GBitmap *loadImageByName(const char *name) {
     if (name == NULL) {
         return NULL;
     }
@@ -140,15 +165,21 @@ ResImage *loadImageByName(const char *name) {
         return NULL;
     }
 
-    ResImage *res = (ResImage*)malloc(sizeof(ResImage) + w * h * sizeof(n_GColor));
+    n_GBitmap *res = (n_GBitmap*)malloc(sizeof(n_GBitmap) + w * h * sizeof(n_GColor));
     if (res == NULL) {
         free(pixels);
         return NULL;
     }
-    res->width = w;
-    res->height = h;
+    res->addr = ((uint8_t*)res) + sizeof(n_GBitmap);
+    res->bounds = n_GRect(0, 0, w, h);
+    res->format = n_GBitmapFormat8Bit;
+    res->raw_bitmap_size = res->bounds.size;
+    res->palette = 0;
+    res->palette_size = 0;
+    res->free_palette_on_destroy = false;
+    res->free_data_on_destroy = false;
 
-    n_GColor *resPixelPtr = res->pixels;
+    n_GColor *resPixelPtr = (n_GColor*)res->addr;
     unsigned char *imgPixelPtr = pixels;
     uint32_t i;
     for (i = 0; i < w*h; i++) {
