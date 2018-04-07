@@ -1,4 +1,5 @@
 #include "rect.h"
+#include <stddef.h>
 
 n_GPoint n_grect_center_point(n_GRect *rect) {
     int16_t x, y;
