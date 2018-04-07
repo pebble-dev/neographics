@@ -38,7 +38,7 @@ bool n_grect_is_empty(const n_GRect *const rect) {
 }
 
 void n_grect_clip(n_GRect *rect_to_clip, const n_GRect* rect_clipper) {
-    if (rect_to_clip == NULL || rect_clipper)
+    if (rect_to_clip == NULL || rect_clipper == NULL)
         return;
     if (rect_to_clip->origin.x < rect_clipper->origin.x) {
         rect_to_clip->size.w -= rect_clipper->origin.x - rect_to_clip->origin.x;

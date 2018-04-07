@@ -8,7 +8,7 @@ typedef enum n_GBitmapFormat {
     n_GBitmapFormat8Bit,         //<! 6-bit color + 2 bit alpha channel. See \ref GColor8 for pixel format.
     n_GBitmapFormat1BitPalette,  //<! up to 2 8-bit colors in the palette, 1-bit indices as pixel data
     n_GBitmapFormat2BitPalette,  //<! up to 4 8-bit colors in the palette, 2-bit indices as pixel data
-    n_GBitmapFormat4BitPalette,  //<! up to 8 8-bit colors in the palette, 2-bit indices as pixel data
+    n_GBitmapFormat4BitPalette,  //<! up to 16 8-bit colors in the palette, 4-bit indices as pixel data
     n_GBitmapFormat8BitCircular, //<! undocumented GBitmap format, currently behaves like \ref GBitmapFormat8Bit
 } n_GBitmapFormat;
 
