@@ -105,6 +105,7 @@ set(sources_test_neographics
     test/test.h	
     test/test_test.h
     test/test_types.h
+	test/test_gbitmap.h
 
     contrib/testrunner_pc/testrunner.h
     contrib/testrunner_pc/testrunner.c
