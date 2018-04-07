@@ -154,6 +154,20 @@
     NGFX_ASSERT_SCREEN_MSG(expected_resource, "%s", int_ngfxtest_msg_subscreen( \
         n_GRect(0, 0, __SCREEN_WIDTH, __SCREEN_HEIGHT), expected_resource))
 
+/*!
+ * Asserts that two chunks of memory are equal with custom message
+ */
+#define NGFX_ASSERT_MEM(actual_ptr, expected_ptr, size, ...) do { \
+    unsigned int left = (unsigned int)(size); \
+    const uint8_t* actual = (const uint8_t*)(actual_ptr); \
+    const uint8_t* expected = (const uint8_t*)(expected_ptr); \
+    for (; left > 0; left--, actual++, expected++) { \
+        if (*actual != *expected) { \
+            NGFX_ASSERT_MSG(false, "Offset %d \tActual: 0x%02x \tExpected: 0x%02x", ((unsigned int)(size)) - left, *actual, *expected); \
+        } \
+    } \
+} while(false)
+
 // Resources
 
 /*!

@@ -14,6 +14,10 @@ NGFX_TEST(Test, SimpleAsserts, {
 
     n_GRect rect = (n_GRect) { .origin = { .x = 1, .y = 2 }, .size = { .w = 3, .h = 4 } };
     NGFX_ASSERT_RECT(rect, rect);
+
+    uint8_t data[4] = { 0x12, 0x34, 0x56, 0x78 };
+    NGFX_ASSERT_MEM(data, data, 4);
+    NGFX_ASSERT_MEM(data, data, 0);
 })
 
 NGFX_TEST(Test, FailSimpleAssert, {
@@ -30,6 +34,12 @@ NGFX_TEST(Test, FailRectAssert, {
     n_GRect a = (n_GRect) { .origin = { .x = 1, .y = 2 },.size = { .w = 3, .h = 4 } };
     n_GRect b = (n_GRect) { .origin = { .x = 1, .y = 5 }, .size = { .w = 9, .h = 4 } };
     NGFX_ASSERT_RECT(a, b);
+})
+
+NGFX_TEST(Test, FailMemAssert, {
+    uint8_t data1[4] = { 0x12, 0x34, 0x56, 0x78 };
+    uint8_t data2[4] = { 0x12, 0x34, 0x56, 0x7F };
+    NGFX_ASSERT_MEM(data1, data2, 4);
 })
 
 NGFX_TEST(Test, SimpleResource, {
