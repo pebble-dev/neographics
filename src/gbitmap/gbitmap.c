@@ -149,16 +149,17 @@ n_GBitmap* n_gbitmap_create_palettized_from_1bit(const n_GBitmap *src_bitmap) {
     dst_bitmap->palette[0] = n_GColorBlack;
     dst_bitmap->palette[1] = n_GColorWhite;
     
-    if (dst_bitmap->row_size_bytes == src_bitmap->row_size_bytes) {
-        // trivial copy
-        memcpy(dst_bitmap->addr, src_bitmap->addr, src_bitmap->row_size_bytes * src_bitmap->bounds.size.h);
+    if (dst_bitmap->row_size_bytes == src_bitmap->row_size_bytes && src_bitmap->bounds.origin.x == 0) {
+        // trivial copy (actually only the first part of the conditions is necessary)
+        const uint8_t* src_address = src_bitmap->addr + src_bitmap->bounds.origin.y * src_bitmap->row_size_bytes;
+        memcpy(dst_bitmap->addr, src_address, src_bitmap->row_size_bytes * src_bitmap->bounds.size.h);
     } else if (src_bitmap->bounds.origin.x % 8 == 0) {
         // copy row for row byte-aligned
         int16_t y;
         for (y = 0; y < dst_bitmap->bounds.size.h; y++) {
             memcpy(
                 dst_bitmap->addr + y * dst_bitmap->row_size_bytes,
-                src_bitmap->addr + src_bitmap->bounds.origin.x + (y + src_bitmap->bounds.origin.y) * src_bitmap->row_size_bytes,
+                src_bitmap->addr + src_bitmap->bounds.origin.x / 8 + (y + src_bitmap->bounds.origin.y) * src_bitmap->row_size_bytes,
                 dst_bitmap->row_size_bytes
             );
         }
@@ -167,13 +168,18 @@ n_GBitmap* n_gbitmap_create_palettized_from_1bit(const n_GBitmap *src_bitmap) {
         uint8_t off = src_bitmap->bounds.origin.x % 8;
         int16_t x, y;
         uint8_t *dst_pixel = dst_bitmap->addr;
-        uint8_t *src_pixel_line = src_bitmap->addr + src_bitmap->bounds.origin.x;
-        for (y = 0; y < dst_bitmap->bounds.size.h; y++) {
+        uint8_t *src_pixel_line = src_bitmap->addr + src_bitmap->bounds.origin.x / 8;
+        src_pixel_line += src_bitmap->bounds.origin.y * src_bitmap->row_size_bytes;
+        for (y = 0; y < dst_bitmap->bounds.size.h; y++) { 
             uint8_t* src_pixel = src_pixel_line;
-            for (x = 0; x < dst_bitmap->bounds.size.w; x++) {
+            for (x = 0; x < dst_bitmap->bounds.size.w; x += 8) {
                 *dst_pixel = (src_pixel[0] >> off) | (src_pixel[1] << (8 - off));
                 dst_pixel++;
                 src_pixel++;
+            }
+            if (dst_bitmap->bounds.size.w % 8 != 0) {
+                uint8_t bits_left = 8 + dst_bitmap->bounds.size.w - x;
+                dst_pixel[-1] &= ((1 << bits_left) - 1);
             }
             src_pixel_line += src_bitmap->row_size_bytes;
         }
