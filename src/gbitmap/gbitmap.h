@@ -72,14 +72,6 @@ n_GColor* n_gbitmap_get_palette(const n_GBitmap *bitmap);
 //! destroyed or when another palette is set.
 void n_gbitmap_set_palette(n_GBitmap *bitmap, n_GColor *palette, bool free_on_destroy);
 
-//! Creates a new n_GBitmap on the heap initialized with the provided Pebble image data.
-//! @param data The Pebble image data. Must not be NULL. The function
-//! assumes the data to be correct; there are no sanity checks performed on the
-//! data. The data will not be copied and the pointer must remain valid for the
-//! lifetime of this n_GBitmap.
-//! @return A pointer to the \ref n_GBitmap or `NULL`.
-n_GBitmap* n_gbitmap_create_with_data(const uint8_t *data);
-
 //! Create a new \ref n_GBitmap on the heap as a sub-bitmap of a 'base' \ref
 //! n_GBitmap, using a n_GRect to indicate what portion of the base to use. The
 //! sub-bitmap will just reference the image data and palette of the base bitmap,
