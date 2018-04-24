@@ -46,3 +46,4 @@ void resetResourceMapping();
 const char *getResourceNameById(uint32_t resource_id);
 n_GBitmap *loadImageByName(const char *name);
 n_GBitmap *loadImageById(uint32_t resource_id);
+n_GBitmap *convert8BitImage(n_GBitmap* source, n_GBitmapFormat format);

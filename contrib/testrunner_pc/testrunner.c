@@ -84,13 +84,22 @@ n_GColor ngfxtest_get_pixel(n_GPoint point) {
 #endif
 }
 
+n_GColor ngfxtest_convert_color_to_system(n_GColor color) {
+#ifdef PBL_BW
+    float luma = color.r * 0.2126f + color.g * 0.7152f + color.b * 0.11f;
+    return (luma > 3 / 2) ? n_GColorWhite : n_GColorBlack;
+#else
+    return color;
+#endif
+}
+
 bool int_ngfxtest_pixel_eq(n_GPoint point, n_GColor expected_color) {
     if (point.x < 0 || point.y < 0 || point.x >= __SCREEN_WIDTH || point.y >= __SCREEN_HEIGHT) {
         return false;
     }
     n_GColor actual = ngfxtest_get_pixel(point);
     actual.a = 3;
-    return actual.argb == expected_color.argb;
+    return actual.argb == ngfxtest_convert_color_to_system(expected_color).argb;
 }
 
 bool int_ngfxtest_subscreen_eq(n_GRect rect, uint32_t expected_resource_id) {
@@ -132,6 +141,7 @@ bool int_ngfxtest_subscreen_eq(n_GRect rect, uint32_t expected_resource_id) {
             n_GPoint point = n_GPoint(rect.origin.x + x, rect.origin.y + y);
             n_GColor actual = ngfxtest_get_pixel(point);
             n_GColor expected = (n_GColor)expected_img->addr[y * expected_img->bounds.size.w + x];
+            expected = ngfxtest_convert_color_to_system(expected);
             if (actual.argb != expected.argb) {
                 snprintf(runner_context.message_buffer2, ERROR_MESSAGE_BUFFER_SIZE,
                     "Screen pixel value at (GPoint){%d, %d} unexpected.\n    Actual: (GColor){%d, %d, %d, %d} \tExpected: (GColor){%d, %d, %d, %d}",

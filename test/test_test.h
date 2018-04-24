@@ -135,18 +135,68 @@ NGFX_TEST(Test, FailScreenWrongColor, {
 })
 
 NGFX_TEST(Test, LoadImage,
-    n_GColor expected[] = {
-#ifdef PBL_BW
-        n_GColorWhite, n_GColorBlack, n_GColorBlack, n_GColorWhite
-#else
-        n_GColorWhite, n_GColorBlack, n_GColorRed, n_GColorGreen
-#endif
-    };
     ngfxtest_map_resource("test_checker.png", 1);
-    ngfxtest_load_image(checker, 1);
+    {
+        ngfxtest_load_image(checker, 1);
 
-    NGFX_ASSERT_SIZE(checker->raw_bitmap_size, ((n_GSize) { 2, 2 }));
-    NGFX_ASSERT_RECT(checker->bounds, n_GRect(0, 0, 2, 2));
-    NGFX_ASSERT_EQ(checker->format, n_GBitmapFormat8Bit);
-    NGFX_ASSERT_MSG(memcmp(checker->addr, expected, 4) == 0, "Image data does not match");
+        NGFX_ASSERT_SIZE(checker->raw_bitmap_size, ((n_GSize) { 2, 2 }));
+        NGFX_ASSERT_RECT(checker->bounds, n_GRect(0, 0, 2, 2));
+        NGFX_ASSERT_EQ(checker->format, n_GBitmapFormat8Bit);
+        NGFX_ASSERT_EQ(checker->addr[0], n_GColorWhite.argb);
+        NGFX_ASSERT_EQ(checker->addr[1], n_GColorBlack.argb);
+        NGFX_ASSERT_EQ(checker->addr[2], n_GColorRed.argb);
+        NGFX_ASSERT_EQ(checker->addr[3], n_GColorGreen.argb);
+    }
+    {
+        ngfxtest_load_image_ex(checker, 1, n_GBitmapFormat4BitPalette);
+        n_GColor colors[4] = {
+            checker->palette[checker->addr[0] & 15],
+            checker->palette[checker->addr[0] >> 4],
+            checker->palette[checker->addr[1] & 15],
+            checker->palette[checker->addr[1] >> 4]
+        };
+
+        NGFX_ASSERT_EQ(checker->format, n_GBitmapFormat4BitPalette);
+        NGFX_ASSERT_COLOR(colors[0], n_GColorWhite);
+        NGFX_ASSERT_COLOR(colors[1], n_GColorBlack);
+        NGFX_ASSERT_COLOR(colors[2], n_GColorRed);
+        NGFX_ASSERT_COLOR(colors[3], n_GColorGreen);
+    }
+    {
+        ngfxtest_load_image_ex(checker, 1, n_GBitmapFormat2BitPalette);
+        n_GColor colors[4] = {
+            checker->palette[(checker->addr[0] >> 0) & 3],
+            checker->palette[(checker->addr[0] >> 2) & 3],
+            checker->palette[(checker->addr[1] >> 0) & 3],
+            checker->palette[(checker->addr[1] >> 2) & 3]
+        };
+
+        NGFX_ASSERT_EQ(checker->format, n_GBitmapFormat2BitPalette);
+        NGFX_ASSERT_COLOR(colors[0], n_GColorWhite);
+        NGFX_ASSERT_COLOR(colors[1], n_GColorBlack);
+        NGFX_ASSERT_COLOR(colors[2], n_GColorRed);
+        NGFX_ASSERT_COLOR(colors[3], n_GColorGreen);
+    }
+    {
+        ngfxtest_load_image_ex(checker, 1, n_GBitmapFormat1BitPalette);
+        n_GColor colors[4] = {
+            checker->palette[(checker->addr[0] >> 0) & 1],
+            checker->palette[(checker->addr[0] >> 1) & 1],
+            checker->palette[(checker->addr[1] >> 0) & 1],
+            checker->palette[(checker->addr[1] >> 1) & 1]
+        };
+
+        NGFX_ASSERT_EQ(checker->format, n_GBitmapFormat1BitPalette);
+        NGFX_ASSERT_COLOR(colors[0], n_GColorWhite);
+        NGFX_ASSERT_COLOR(colors[1], n_GColorBlack);
+        NGFX_ASSERT_COLOR(colors[2], n_GColorBlack);
+        NGFX_ASSERT_COLOR(colors[3], n_GColorBlack);
+    }
+    {
+        ngfxtest_load_image_ex(checker, 1, n_GBitmapFormat1Bit);
+
+        NGFX_ASSERT_EQ(checker->format, n_GBitmapFormat1Bit);
+        NGFX_ASSERT_EQ(checker->addr[0] & 3, 0b01);
+        NGFX_ASSERT_EQ(checker->addr[1] & 3, 0b00);
+    }
 )

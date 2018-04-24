@@ -57,7 +57,7 @@
  * Asserts that some primitive `actual` is equal `expected`
  */
 #define NGFX_ASSERT_EQ(actual,expected) \
-    NGFX_ASSERT_EQ_MSG(actual, expected, "%s", "Actual: " #actual " \tExpected: " #expected)
+    NGFX_ASSERT_EQ_MSG(actual, expected, "Actual: %d \tExpected: %d", actual, expected)
 
 /*!
  * Asserts that some \ref n_GPoint `actual` is equal `expected` with custom message
@@ -155,15 +155,15 @@
         n_GRect(0, 0, __SCREEN_WIDTH, __SCREEN_HEIGHT), expected_resource))
 
 /*!
- * Asserts that two chunks of memory are equal with custom message
+ * Asserts that two chunks of memory are equal
  */
-#define NGFX_ASSERT_MEM(actual_ptr, expected_ptr, size, ...) do { \
-    unsigned int left = (unsigned int)(size); \
-    const uint8_t* actual = (const uint8_t*)(actual_ptr); \
-    const uint8_t* expected = (const uint8_t*)(expected_ptr); \
-    for (; left > 0; left--, actual++, expected++) { \
-        if (*actual != *expected) { \
-            NGFX_ASSERT_MSG(false, "Offset %d \tActual: 0x%02x \tExpected: 0x%02x", ((unsigned int)(size)) - left, *actual, *expected); \
+#define NGFX_ASSERT_MEM(actual_ptr,expected_ptr,size) do { \
+    unsigned int _left = (unsigned int)(size); \
+    const uint8_t* _actual = (const uint8_t*)(actual_ptr); \
+    const uint8_t* _expected = (const uint8_t*)(expected_ptr); \
+    for (; _left > 0; _left--, _actual++, _expected++) { \
+        if (*_actual != *_expected) { \
+            NGFX_ASSERT_MSG(false, "Offset %d \tActual: 0x%02x \tExpected: 0x%02x", ((unsigned int)(size)) - _left, *_actual, *_expected); \
         } \
     } \
 } while(false)
@@ -181,8 +181,15 @@
  * Loads a mapped resource as a const GBitmap (always 8Bit) into a new local variable
  * It should not be freed by the test
  */
-#define ngfxtest_load_image(variable_name, resource_id) \
-    const struct n_GBitmap* const variable_name = int_ngfxtest_load_image((resource_id)); \
+#define ngfxtest_load_image(variable_name,resource_id) \
+    ngfxtest_load_image_ex(variable_name, resource_id, n_GBitmapFormat8Bit)
+
+/*!
+ * Loads a mapped resource as a const GBitmap with selectable format into a new local variable
+ * It should not be freed by the test
+ */
+#define ngfxtest_load_image_ex(variable_name,resource_id,format) \
+    const struct n_GBitmap* const variable_name = int_ngfxtest_load_image((resource_id), (format)); \
     NGFX_ASSERT_MSG((variable_name != NULL), "Could not load image from resource " #resource_id)
 
 /*! @}
@@ -198,7 +205,7 @@ const char* int_ngfxtest_msg_pixel(n_GPoint point, n_GColor expected_color);
 const char* int_ngfxtest_msg_subscreen(n_GRect rect, uint32_t expected_resource_id);
 
 bool int_ngfxtest_map_resource(const char* resource_name, uint32_t resource_id);
-const struct n_GBitmap* int_ngfxtest_load_image(uint32_t resource_id);
+const struct n_GBitmap* int_ngfxtest_load_image(uint32_t resource_id, enum n_GBitmapFormat format);
 
 typedef struct {
     bool success;
