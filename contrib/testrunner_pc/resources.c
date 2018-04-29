@@ -5,16 +5,54 @@
 #define TEST_RESOURCE_DIR "test/resources/"
 #define MAX_PATH_LEN 256
 
-void resetResourceMapping() {
-    int i;
-    runner_context.res_mapping.count = 0;
+bool initTestRunnerContext(TestRunnerContext* runner_context) {
+    uint8_t *framebuffer = (uint8_t*)malloc(SCREEN_FRAMEBUFFER_SIZE);
+    if (framebuffer == NULL) {
+        fprintf(stderr, "Could not allocate framebuffer\n");
+        return false;
+    }
+    n_GContext *ctx = n_graphics_context_from_buffer(framebuffer);
+    if (ctx == NULL) {
+        fprintf(stderr, "Could not create context\n");
+        return false;
+    }
+    memset(runner_context, 0, sizeof(TestRunnerContext));
+    runner_context->framebuffer = framebuffer;
+    runner_context->context = ctx;
+    return true;
+}
 
-    for (i = 0; i < MAX_LOADED_IMAGES; i++) {
-        if (runner_context.images[i] != NULL) {
-            free(runner_context.images[i]);
-            runner_context.images[i] = NULL;
+void resetTestRunnerContext(TestRunnerContext* runner_context, const char* module, const char* name) {
+    memset(runner_context->framebuffer, 0, SCREEN_FRAMEBUFFER_SIZE);
+
+    runner_context->res_mapping.count = 0;
+    for (int i = 0; i < MAX_LOADED_IMAGES; i++) {
+        if (runner_context->images[i] != NULL) {
+            free(runner_context->images[i]);
+            runner_context->images[i] = NULL;
         }
     }
+
+    runner_context->current_test_module = module;
+    runner_context->current_test_name = name;
+}
+
+void freeTestRunnerContext(TestRunnerContext* runner_context) {
+    n_graphics_context_destroy(runner_context->context);
+    free(runner_context->framebuffer);
+}
+
+void saveAsActualImage(TestRunnerContext* runner_context) {
+    if (runner_context->actual_image_path == NULL)
+        return;
+
+    char filename[512];
+    snprintf(filename, 512, "%s/%s.%s.%s.png", runner_context->actual_image_path,
+        runner_context->current_test_module, runner_context->current_test_name,
+        PBL_TYPE_STR);
+
+    if (!saveFramebufferToPNG(runner_context->context, filename))
+        fprintf(stderr, "Could not save %s: %s\n", filename, stbi_failure_reason());
 }
 
 const char *getResourceNameById(uint32_t resource_id) {
@@ -239,7 +277,7 @@ n_GBitmap *convert8BitImage(n_GBitmap* source, n_GBitmapFormat format) {
         return NULL;
     }
     res->addr = ((uint8_t*)res) + sizeof(n_GBitmap);
-    res->palette = res->addr + pitch * h;
+    res->palette = (n_GColor*)res->addr + pitch * h;
     res->bounds = source->bounds;
     res->format = format;
     res->free_data_on_destroy = false;

@@ -3,6 +3,7 @@
  */
 #include "testrunner.h"
 #include <stdarg.h>
+#include <stb.h>
 
 TestRunnerContext runner_context;
 
@@ -19,31 +20,72 @@ bool graphics_release_frame_buffer(n_GContext *ctx, GBitmap *bitmap) {
     return false;
 }
 
+void print_help() {
+    static const char* text =
+        "usage: <test_neographics> {<option> [<argument>]}\n"
+        "options:\n"
+        "  -h          Shows this help screen\n"
+        "  -m <string> Only run modules containing a string\n"
+        "  -t <string> Only run tests containing a string\n"
+        "  -a <path>   Save actual images to a path\n";
+    fputs(text, stderr);
+}
+
 int main(int argc, char *argv[]) {
-    uint8_t *framebuffer = (uint8_t*)malloc(SCREEN_FRAMEBUFFER_SIZE);
-    if (framebuffer == NULL) {
-        fprintf(stderr, "Could not allocate framebuffer\n");
-        return 2;
+    // Parse arguments
+    const char* arg_include_module = "";
+    const char* arg_include_test = "";
+    const char* arg_actual_image_path = NULL;
+
+    char** opts = stb_getopt_param(&argc, argv, "mta");
+    if (opts == NULL) {
+        fputs("Missing argument", stderr);
+        print_help();
+        return 1;
     }
-    n_GContext *ctx = n_graphics_context_from_buffer(framebuffer);
-    if (ctx == NULL) {
-        fprintf(stderr, "Could not create context\n");
-        return 2;
+    char** cur_opt = opts;
+    while (*cur_opt != NULL) {
+        char option = (*cur_opt)[0];
+        char* argument = *cur_opt + 1;
+        switch (option) {
+            case('h'):
+                print_help();
+                return 0;
+            case('m'):
+                arg_include_module = argument;
+                break;
+            case('t'):
+                arg_include_test = argument;
+                break;
+            case('a'):
+                arg_actual_image_path = argument;
+                break;
+            default:
+                fprintf(stderr, "Unknown option: %c\n", option);
+                return 1;
+        }
+        cur_opt++;
     }
-    memset(&runner_context, 0, sizeof(TestRunnerContext));
-    runner_context.framebuffer = framebuffer;
-    runner_context.context = ctx;
 
     // Run the tests
+    if (!initTestRunnerContext(&runner_context))
+        return 2;
+
     uint32_t test_count = 0, test_succeeded = 0;
     const n_Test *current_test = tests;
     while (current_test->func != NULL) {
-        memset(framebuffer, 0, SCREEN_FRAMEBUFFER_SIZE);
+        if (stb_stristr(current_test->module, arg_include_module) == NULL ||
+            stb_stristr(current_test->name, arg_include_test) == NULL)
+            continue;
+
+        test_count++;
         bool should_fail = strcmp(current_test->module, "Test") == 0 &&
             strstr(current_test->name, "Fail") == current_test->name;
 
-        test_count++;
-        n_TestResult result = current_test->func(framebuffer, ctx);
+        resetTestRunnerContext(&runner_context, current_test->module, current_test->name);
+        runner_context.actual_image_path = should_fail ? NULL : arg_actual_image_path;
+
+        n_TestResult result = current_test->func(runner_context.framebuffer, runner_context.context);
         bool success = (should_fail && !result.success) || (!should_fail && result.success);
         if (success) {
             test_succeeded++;
@@ -59,15 +101,14 @@ int main(int argc, char *argv[]) {
         }
         setConsoleColor(NGFX_CONCOLOR_NORMAL);
 
-        resetResourceMapping();
         current_test++;
     }
 
     setConsoleColor(NGFX_CONCOLOR_NORMAL);
     printf("\n%d / %d Tests succeeded\n", test_succeeded, test_count);
 
-    n_graphics_context_destroy(ctx);
-    free(framebuffer);
+    freeTestRunnerContext(&runner_context);
+    stb_getopt_free(opts);
     return test_count != test_succeeded;
 }
 
@@ -147,6 +188,7 @@ bool int_ngfxtest_subscreen_eq(n_GRect rect, uint32_t expected_resource_id) {
                     "Screen pixel value at (GPoint){%d, %d} unexpected.\n    Actual: (GColor){%d, %d, %d, %d} \tExpected: (GColor){%d, %d, %d, %d}",
                     point.x, point.y, actual.r, actual.g, actual.b, actual.a, expected.r, expected.g, expected.b, expected.a);
                 free(expected_img);
+                saveAsActualImage(&runner_context);
                 return false;
             }
         }
