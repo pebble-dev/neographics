@@ -14,7 +14,7 @@ ExternalProject_Add(
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
-	UPDATE_DISCONNECTED 1
+    UPDATE_DISCONNECTED 1
 )
 ExternalProject_Get_Property(stb source_dir)
 set(STB_SOURCE_DIR ${source_dir})
