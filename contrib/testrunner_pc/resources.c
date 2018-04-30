@@ -168,7 +168,7 @@ size_t resource_load(ResHandle handle, uint8_t *buffer, size_t max_length) {
     return size_read;
 }
 
-const n_GBitmap *int_ngfxtest_load_image(uint32_t resource_id, n_GBitmapFormat format) {
+const n_GBitmap *int_ngfxtest_load_image(uint32_t resource_id, GBitmapFormat format) {
     n_GBitmap* result = loadImageById(resource_id);
     if (result == NULL)
         return NULL;

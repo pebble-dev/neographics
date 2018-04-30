@@ -14,6 +14,7 @@ ExternalProject_Add(
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
+	UPDATE_DISCONNECTED 1
 )
 ExternalProject_Get_Property(stb source_dir)
 set(STB_SOURCE_DIR ${source_dir})
@@ -105,7 +106,7 @@ set(sources_test_neographics
     test/test.h	
     test/test_test.h
     test/test_types.h
-	test/test_gbitmap.h
+    test/test_gbitmap.h
 
     contrib/testrunner_pc/testrunner.h
     contrib/testrunner_pc/testrunner.c

@@ -54,7 +54,7 @@ typedef enum GCompOp {
 
 
 typedef struct GBitmap GBitmap;
-typedef enum n_GBitmapFormat GBitmapFormat;
+typedef int GBitmapFormat; // no forward declarations of enums
 
 // Framebuffer
 

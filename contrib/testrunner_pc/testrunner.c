@@ -33,9 +33,9 @@ void print_help() {
 
 int main(int argc, char *argv[]) {
     // Parse arguments
-    const char* arg_include_module = "";
-    const char* arg_include_test = "";
-    const char* arg_actual_image_path = NULL;
+    char* arg_include_module = "";
+    char* arg_include_test = "";
+    char* arg_actual_image_path = NULL;
 
     char** opts = stb_getopt_param(&argc, argv, "mta");
     if (opts == NULL) {

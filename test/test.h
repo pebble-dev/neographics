@@ -205,7 +205,7 @@ const char* int_ngfxtest_msg_pixel(n_GPoint point, n_GColor expected_color);
 const char* int_ngfxtest_msg_subscreen(n_GRect rect, uint32_t expected_resource_id);
 
 bool int_ngfxtest_map_resource(const char* resource_name, uint32_t resource_id);
-const struct n_GBitmap* int_ngfxtest_load_image(uint32_t resource_id, enum n_GBitmapFormat format);
+const struct n_GBitmap* int_ngfxtest_load_image(uint32_t resource_id, GBitmapFormat format);
 
 typedef struct {
     bool success;
