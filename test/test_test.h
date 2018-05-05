@@ -44,7 +44,7 @@ NGFX_TEST(Test, FailMemAssert, {
 
 NGFX_TEST(Test, SimpleResource, {
     ngfxtest_map_resource("test_helloworld.txt", 1);
-    const char* const expected = "Hello World!";
+    const char *const expected = "Hello World!";
 
     uint8_t buffer[64];
     ResHandle handle = resource_get_handle(1);

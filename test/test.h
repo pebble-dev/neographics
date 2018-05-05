@@ -159,8 +159,8 @@
  */
 #define NGFX_ASSERT_MEM(actual_ptr,expected_ptr,size) do { \
     unsigned int _left = (unsigned int)(size); \
-    const uint8_t* _actual = (const uint8_t*)(actual_ptr); \
-    const uint8_t* _expected = (const uint8_t*)(expected_ptr); \
+    const uint8_t *_actual = (const uint8_t*)(actual_ptr); \
+    const uint8_t *_expected = (const uint8_t*)(expected_ptr); \
     for (; _left > 0; _left--, _actual++, _expected++) { \
         if (*_actual != *_expected) { \
             NGFX_ASSERT_MSG(false, "Offset %d \tActual: 0x%02x \tExpected: 0x%02x", ((unsigned int)(size)) - _left, *_actual, *_expected); \
@@ -189,7 +189,7 @@
  * It should not be freed by the test
  */
 #define ngfxtest_load_image_ex(variable_name,resource_id,format) \
-    const struct n_GBitmap* const variable_name = int_ngfxtest_load_image((resource_id), (format)); \
+    const struct n_GBitmap *const variable_name = int_ngfxtest_load_image((resource_id), (format)); \
     NGFX_ASSERT_MSG((variable_name != NULL), "Could not load image from resource " #resource_id)
 
 /*! @}
@@ -200,25 +200,25 @@
 bool int_ngfxtest_pixel_eq(n_GPoint point, n_GColor expected_color);
 bool int_ngfxtest_subscreen_eq(n_GRect rect, uint32_t expected_resource_id);
 
-const char* int_ngfxtest_format_msg(const char* format, ...);
-const char* int_ngfxtest_msg_pixel(n_GPoint point, n_GColor expected_color);
-const char* int_ngfxtest_msg_subscreen(n_GRect rect, uint32_t expected_resource_id);
+const char *int_ngfxtest_format_msg(const char *format, ...);
+const char *int_ngfxtest_msg_pixel(n_GPoint point, n_GColor expected_color);
+const char *int_ngfxtest_msg_subscreen(n_GRect rect, uint32_t expected_resource_id);
 
-bool int_ngfxtest_map_resource(const char* resource_name, uint32_t resource_id);
-const struct n_GBitmap* int_ngfxtest_load_image(uint32_t resource_id, GBitmapFormat format);
+bool int_ngfxtest_map_resource(const char *resource_name, uint32_t resource_id);
+const struct n_GBitmap *int_ngfxtest_load_image(uint32_t resource_id, GBitmapFormat format);
 
 typedef struct {
     bool success;
-    const char* message;
-    const char* file;
+    const char *message;
+    const char *file;
     unsigned int line;
 } n_TestResult;
 
-typedef n_TestResult (*n_TestFunction)(uint8_t* const framebuffer, struct n_GContext* const context);
+typedef n_TestResult (*n_TestFunction)(uint8_t *const framebuffer, struct n_GContext *const context);
 
 typedef struct {
-    const char* module;
-    const char* name;
+    const char *module;
+    const char *name;
     n_TestFunction func;
 } n_Test;
 #endif

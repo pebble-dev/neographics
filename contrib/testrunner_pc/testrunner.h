@@ -36,21 +36,21 @@ typedef struct {
     n_GContext *context;
     ResourceMapping res_mapping;
     n_GBitmap *images[MAX_LOADED_IMAGES];
-    const char* actual_image_path;
-    const char* current_test_module;
-    const char* current_test_name;
+    const char *actual_image_path;
+    const char *current_test_module;
+    const char *current_test_name;
     char message_buffer[ERROR_MESSAGE_BUFFER_SIZE];
     char message_buffer2[ERROR_MESSAGE_BUFFER_SIZE]; // to be used by int_ngfxtest_msg_xyz functions
 } TestRunnerContext;
 extern TestRunnerContext runner_context;
 
-bool initTestRunnerContext(TestRunnerContext* runner_context);
-void resetTestRunnerContext(TestRunnerContext* runner_context, const char* module, const char* name);
-void freeTestRunnerContext(TestRunnerContext* runner_context);
-void saveAsActualImage(TestRunnerContext* runner_context);
+bool initTestRunnerContext(TestRunnerContext *runner_context);
+void resetTestRunnerContext(TestRunnerContext *runner_context, const char *module, const char *name);
+void freeTestRunnerContext(TestRunnerContext *runner_context);
+void saveAsActualImage(TestRunnerContext *runner_context);
 
 // Resources
 const char *getResourceNameById(uint32_t resource_id);
 n_GBitmap *loadImageByName(const char *name);
 n_GBitmap *loadImageById(uint32_t resource_id);
-n_GBitmap *convert8BitImage(n_GBitmap* source, n_GBitmapFormat format);
+n_GBitmap *convert8BitImage(n_GBitmap *source, n_GBitmapFormat format);

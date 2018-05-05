@@ -21,7 +21,7 @@ bool graphics_release_frame_buffer(n_GContext *ctx, GBitmap *bitmap) {
 }
 
 void print_help() {
-    static const char* text =
+    static const char *text =
         "usage: <test_neographics> {<option> [<argument>]}\n"
         "options:\n"
         "  -h          Shows this help screen\n"
@@ -33,20 +33,20 @@ void print_help() {
 
 int main(int argc, char *argv[]) {
     // Parse arguments
-    char* arg_include_module = "";
-    char* arg_include_test = "";
-    char* arg_actual_image_path = NULL;
+    char *arg_include_module = "";
+    char *arg_include_test = "";
+    char *arg_actual_image_path = NULL;
 
-    char** opts = stb_getopt_param(&argc, argv, "mta");
+    char **opts = stb_getopt_param(&argc, argv, "mta");
     if (opts == NULL) {
         fputs("Missing argument", stderr);
         print_help();
         return 1;
     }
-    char** cur_opt = opts;
+    char **cur_opt = opts;
     while (*cur_opt != NULL) {
         char option = (*cur_opt)[0];
-        char* argument = *cur_opt + 1;
+        char *argument = *cur_opt + 1;
         switch (option) {
             case('h'):
                 print_help();

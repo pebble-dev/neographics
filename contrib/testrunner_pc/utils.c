@@ -5,7 +5,7 @@
 #include <stb_image_write.h>
 
 bool saveFramebufferToPNG(n_GContext *ctx, const char *filename) {
-    uint8_t* color_framebuffer = (uint8_t*)malloc(__SCREEN_WIDTH * __SCREEN_HEIGHT * 4);
+    uint8_t *color_framebuffer = (uint8_t*)malloc(__SCREEN_WIDTH * __SCREEN_HEIGHT * 4);
     if (color_framebuffer == NULL)
         return false;
 

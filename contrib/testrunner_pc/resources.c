@@ -5,7 +5,7 @@
 #define TEST_RESOURCE_DIR "test/resources/"
 #define MAX_PATH_LEN 256
 
-bool initTestRunnerContext(TestRunnerContext* runner_context) {
+bool initTestRunnerContext(TestRunnerContext *runner_context) {
     uint8_t *framebuffer = (uint8_t*)malloc(SCREEN_FRAMEBUFFER_SIZE);
     if (framebuffer == NULL) {
         fprintf(stderr, "Could not allocate framebuffer\n");
@@ -22,7 +22,7 @@ bool initTestRunnerContext(TestRunnerContext* runner_context) {
     return true;
 }
 
-void resetTestRunnerContext(TestRunnerContext* runner_context, const char* module, const char* name) {
+void resetTestRunnerContext(TestRunnerContext *runner_context, const char *module, const char *name) {
     memset(runner_context->framebuffer, 0, SCREEN_FRAMEBUFFER_SIZE);
 
     runner_context->res_mapping.count = 0;
@@ -37,12 +37,12 @@ void resetTestRunnerContext(TestRunnerContext* runner_context, const char* modul
     runner_context->current_test_name = name;
 }
 
-void freeTestRunnerContext(TestRunnerContext* runner_context) {
+void freeTestRunnerContext(TestRunnerContext *runner_context) {
     n_graphics_context_destroy(runner_context->context);
     free(runner_context->framebuffer);
 }
 
-void saveAsActualImage(TestRunnerContext* runner_context) {
+void saveAsActualImage(TestRunnerContext *runner_context) {
     if (runner_context->actual_image_path == NULL)
         return;
 
@@ -169,12 +169,12 @@ size_t resource_load(ResHandle handle, uint8_t *buffer, size_t max_length) {
 }
 
 const n_GBitmap *int_ngfxtest_load_image(uint32_t resource_id, GBitmapFormat format) {
-    n_GBitmap* result = loadImageById(resource_id);
+    n_GBitmap *result = loadImageById(resource_id);
     if (result == NULL)
         return NULL;
 
     if (format != n_GBitmapFormat8Bit) {
-        n_GBitmap* converted = convert8BitImage(result, format);
+        n_GBitmap *converted = convert8BitImage(result, format);
         free(result);
         if (converted == NULL)
             return NULL;
@@ -248,7 +248,7 @@ float color_distance(n_GColor a, n_GColor b) {
     return dr * dr + dg * dg + db * db + da * da;
 }
 
-n_GBitmap *convert8BitImage(n_GBitmap* source, n_GBitmapFormat format) {
+n_GBitmap *convert8BitImage(n_GBitmap *source, n_GBitmapFormat format) {
     // this uses a fixed palette pretty close to the ANSI colors (but better suited for ngfx tests)
     // 1Bit is just 1BitPalette without the palette
     static const uint8_t source_palette[16] = {

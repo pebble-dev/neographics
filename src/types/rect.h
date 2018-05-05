@@ -71,7 +71,7 @@ bool n_grect_is_empty(const n_GRect *const rect);
 /*!
  * Trim one GRect using the edges of a second GRect
  */
-void n_grect_clip(n_GRect *rect_to_clip, const n_GRect* rect_clipper);
+void n_grect_clip(n_GRect *rect_to_clip, const n_GRect *rect_clipper);
 
 /*!
  * Tests whether a GRect contains a point

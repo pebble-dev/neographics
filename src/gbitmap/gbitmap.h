@@ -40,7 +40,7 @@ n_GBitmapFormat n_gbitmap_get_format(const n_GBitmap *bitmap);
 //! specified by the format of the bitmap.
 //! @param bitmap A pointer to a n_GBitmap
 //! @return pointer to the raw image data
-uint8_t* n_gbitmap_get_data(const n_GBitmap *bitmap);
+uint8_t *n_gbitmap_get_data(const n_GBitmap *bitmap);
 
 //! Set the raw bitmap data for the given \ref n_GBitmap.
 //! @param bitmap A pointer to the n_GBitmap
@@ -63,7 +63,7 @@ void n_gbitmap_set_bounds(n_GBitmap *bitmap, n_GRect bounds);
 //! Get the palette for the given \ref GBitmap.
 //! @param bitmap A pointer to the GBitmap
 //! @return Pointer to a \ref n_GColor array containing the palette colors.
-n_GColor* n_gbitmap_get_palette(const n_GBitmap *bitmap);
+n_GColor *n_gbitmap_get_palette(const n_GBitmap *bitmap);
 
 //! Set the palette for the given \ref n_GBitmap.
 //! @param bitmap A pointer to the n_GBitmap
@@ -81,13 +81,13 @@ void n_gbitmap_set_palette(n_GBitmap *bitmap, n_GColor *palette, bool free_on_de
 //! @param sub_rect The rectangle within the image data of the base bitmap. The
 //! bounds of the base bitmap will be used to clip `sub_rect`.
 //! @return A pointer to the \ref n_GBitmap or `NULL`.
-n_GBitmap* n_gbitmap_create_as_sub_bitmap(const n_GBitmap *base_bitmap, n_GRect sub_rect);
+n_GBitmap *n_gbitmap_create_as_sub_bitmap(const n_GBitmap *base_bitmap, n_GRect sub_rect);
 
 //! Creates a new blank n_GBitmap on the heap initialized to zeroes.
 //! @param size The Pebble image dimensions as a \ref n_GSize.
 //! @param format The \ref n_GBitmapFormat the created image should be in.
 //! @return A pointer to the \ref n_GBitmap or `NULL`.
-n_GBitmap* n_gbitmap_create_blank(n_GSize size, n_GBitmapFormat format);
+n_GBitmap *n_gbitmap_create_blank(n_GSize size, n_GBitmapFormat format);
 
 //! Creates a new blank n_GBitmap on the heap, initialized to zeroes, and assigns it the given
 //! palette, which has to be kept valid.
@@ -97,14 +97,14 @@ n_GBitmap* n_gbitmap_create_blank(n_GSize size, n_GBitmapFormat format);
 //! @param free_on_destroy Set whether the palette data should be freed along with the bitmap data
 //! when the n_GBitmap is destroyed.
 //! @return A Pointer to the \ref n_GBitmap or `NULL`.
-n_GBitmap* n_gbitmap_create_blank_with_palette(n_GSize size, n_GBitmapFormat format, n_GColor *palette, bool free_on_destroy);
+n_GBitmap *n_gbitmap_create_blank_with_palette(n_GSize size, n_GBitmapFormat format, n_GColor *palette, bool free_on_destroy);
 
 //! Given a 1-bit GBitmap, create a new bitmap of format n_GBitmapFormat1BitPalette.
 //! The new data buffer is allocated on the heap, and a 2-color palette is allocated as well.
 //! @param src_bitmap A n_GBitmap of format n_GBitmapFormat1Bit which is to be copied into a newly
 //! created n_GBitmap of format n_GBitmapFormat1BitPalettized.
 //! @returns The newly created 1-bit palettized n_GBitmap, or NULL if there is not sufficient space.
-n_GBitmap* n_gbitmap_create_palettized_from_1bit(const n_GBitmap *src_bitmap);
+n_GBitmap *n_gbitmap_create_palettized_from_1bit(const n_GBitmap *src_bitmap);
 
 //! Destroy a \ref n_GBitmap.
-void n_gbitmap_destroy(n_GBitmap* bitmap);
+void n_gbitmap_destroy(n_GBitmap *bitmap);

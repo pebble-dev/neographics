@@ -39,7 +39,7 @@ typedef struct n_GPoint {
 /*!
  * Tests whether 2 GPoint are equal.
  */
-bool n_gpoint_equal(const n_GPoint* point_a, const n_GPoint* point_b); // implemented in rect.c
+bool n_gpoint_equal(const n_GPoint *point_a, const n_GPoint *point_b); // implemented in rect.c
 
 /*! @}
  *  @}
