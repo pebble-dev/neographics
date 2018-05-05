@@ -2,12 +2,12 @@
 #include "macros.h"
 
 static const uint8_t n_prv_palette_size[] = {
-    0,  /* n_GBitmapFormat1Bit */
-    0,  /* n_GBitmapFormat8Bit */
-    2,  /* n_GBitmapFormat1BitPalette */
-    4,  /* n_GBitmapFormat2BitPalette */
-    16, /* n_GBitmapFormat4BitPalette */
-    0,  /* n_GBitmapFormat8BitCircular */
+    [n_GBitmapFormat1Bit] = 0,
+    [n_GBitmapFormat8Bit] = 0,
+    [n_GBitmapFormat1BitPalette] = 2,
+    [n_GBitmapFormat2BitPalette] = 4,
+    [n_GBitmapFormat4BitPalette] = 16,
+    [n_GBitmapFormat8BitCircular] = 0,
 };
 
 uint16_t n_gbitmap_get_bytes_per_row(const n_GBitmap *bitmap) {

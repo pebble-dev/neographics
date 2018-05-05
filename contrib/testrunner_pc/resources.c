@@ -47,7 +47,7 @@ void saveAsActualImage(TestRunnerContext *runner_context) {
         return;
 
     char filename[512];
-    snprintf(filename, 512, "%s/%s.%s.%s.png", runner_context->actual_image_path,
+    snprintf(filename, sizeof(filename), "%s/%s.%s.%s.png", runner_context->actual_image_path,
         runner_context->current_test_module, runner_context->current_test_name,
         PBL_TYPE_STR);
 
@@ -178,8 +178,8 @@ const n_GBitmap *int_ngfxtest_load_image(uint32_t resource_id, GBitmapFormat for
         free(result);
         if (converted == NULL)
             return NULL;
-        else
-            result = converted;
+        
+        result = converted;
     }
 
     int i = 0;
