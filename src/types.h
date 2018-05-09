@@ -10,7 +10,7 @@
 |                                   Types                                      |
 |                                                                              |
 |    This file should include all `typedef`s relevant to graphics in           |
-|    general *except *DrawCommands. It should also contain all macros          |
+|    general *except* DrawCommands. It should also contain all macros          |
 |    relevant to creating or modifying those types.                            |
 |                                                                              |
 `-----------------------------------------------------------------------------*/

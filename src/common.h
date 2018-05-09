@@ -42,7 +42,7 @@ void n_graphics_prv_draw_col(uint8_t * fb,
     uint8_t fill);
 
 /*!
- * Draws a one-pixel row *very *quickly.
+ * Draws a one-pixel row *very* quickly.
  */
 void n_graphics_prv_draw_row(uint8_t * fb,
     int16_t y, int16_t left, int16_t right,
