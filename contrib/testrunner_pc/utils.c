@@ -4,10 +4,12 @@
 #include <stb_image.h>
 #include <stb_image_write.h>
 
-void saveFramebufferToPNG(n_GContext *ctx, const char *filename) {
-    static uint8_t color_framebuffer[__SCREEN_WIDTH * __SCREEN_HEIGHT * 4]; // ugly, but hey we are on PC now
-    uint8_t *outColorPtr = color_framebuffer;
+bool saveFramebufferToPNG(n_GContext *ctx, const char *filename) {
+    uint8_t *color_framebuffer = (uint8_t*)malloc(__SCREEN_WIDTH * __SCREEN_HEIGHT * 4);
+    if (color_framebuffer == NULL)
+        return false;
 
+    uint8_t *outColorPtr = color_framebuffer;
 #ifdef PBL_BW
     uint8_t *fbColorPtr, *fbLinePtr = ctx->fbuf;
     for (uint32_t y = 0; y < __SCREEN_HEIGHT; y++) {
@@ -36,7 +38,9 @@ void saveFramebufferToPNG(n_GContext *ctx, const char *filename) {
     }
 #endif
 
-    stbi_write_png(filename, __SCREEN_WIDTH, __SCREEN_HEIGHT, 4, color_framebuffer, __SCREEN_WIDTH * 4);
+    int result = stbi_write_png(filename, __SCREEN_WIDTH, __SCREEN_HEIGHT, 4, color_framebuffer, __SCREEN_WIDTH * 4);
+    free(color_framebuffer);
+    return (bool)result;
 }
 
 #ifdef WIN32

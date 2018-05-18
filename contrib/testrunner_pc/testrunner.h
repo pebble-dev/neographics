@@ -1,6 +1,7 @@
 #pragma once
 #include "../test/test.h"
 #include "graphics.h"
+#include "gbitmap/gbitmap.h"
 
 #define _MACRO_TO_STRING(m) #m
 #define MACRO_TO_STRING(m) _MACRO_TO_STRING(m)
@@ -8,11 +9,12 @@
 
 #define SCREEN_FRAMEBUFFER_SIZE __SCREEN_FRAMEBUFFER_ROW_BYTE_AMOUNT * __SCREEN_HEIGHT
 #define ERROR_MESSAGE_BUFFER_SIZE 512
+#define MAX_LOADED_IMAGES 32
 
 extern const n_Test tests[];
 
 // Utils
-void saveFramebufferToPNG(struct n_GContext *ctx, const char *filename);
+bool saveFramebufferToPNG(struct n_GContext *ctx, const char *filename);
 
 typedef enum {
     NGFX_CONCOLOR_NORMAL = 0,
@@ -30,22 +32,25 @@ typedef struct {
 } ResourceMapping;
 
 typedef struct {
-    const uint8_t *framebuffer;
-    const n_GContext *context;
+    uint8_t *framebuffer;
+    n_GContext *context;
     ResourceMapping res_mapping;
+    n_GBitmap *images[MAX_LOADED_IMAGES];
+    const char *actual_image_path;
+    const char *current_test_module;
+    const char *current_test_name;
     char message_buffer[ERROR_MESSAGE_BUFFER_SIZE];
     char message_buffer2[ERROR_MESSAGE_BUFFER_SIZE]; // to be used by int_ngfxtest_msg_xyz functions
 } TestRunnerContext;
 extern TestRunnerContext runner_context;
 
-// Resources
-typedef struct { // to be replaced with n_GBitmap
-    uint32_t width;
-    uint32_t height;
-    n_GColor pixels[];
-} ResImage;
+bool initTestRunnerContext(TestRunnerContext *runner_context);
+void resetTestRunnerContext(TestRunnerContext *runner_context, const char *module, const char *name);
+void freeTestRunnerContext(TestRunnerContext *runner_context);
+void saveAsActualImage(TestRunnerContext *runner_context);
 
-void resetResourceMapping();
+// Resources
 const char *getResourceNameById(uint32_t resource_id);
-ResImage *loadImageByName(const char *name);
-ResImage *loadImageById(uint32_t resource_id);
+n_GBitmap *loadImageByName(const char *name);
+n_GBitmap *loadImageById(uint32_t resource_id);
+n_GBitmap *convert8BitImage(n_GBitmap *source, n_GBitmapFormat format);

@@ -2,6 +2,7 @@
 #include <pebble.h>
 #include "macros.h"
 #include "types.h"
+#include "gbitmap/gbitmap.h"
 
 /*-----------------------------------------------------------------------------.
 |                                                                              |
