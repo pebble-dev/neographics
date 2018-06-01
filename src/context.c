@@ -14,8 +14,9 @@ void n_graphics_context_set_text_color(n_GContext * ctx, n_GColor color) {
     ctx->text_color = color;
 }
 
-// void n_graphics_context_set_compositing_mode(n_GContext * ctx, ...) {
-// }
+void n_graphics_context_set_compositing_mode(n_GContext * ctx, n_GCompOp comp_op) {
+    ctx->comp_op = comp_op;
+}
 
 void n_graphics_context_set_antialiased(n_GContext * ctx, bool enable) {
     ctx->antialias = enable;
@@ -89,7 +90,7 @@ static n_GContext * n_graphics_context_create() {
     n_graphics_context_set_stroke_color(out, (n_GColor) {.argb = 0b11000000});
     n_graphics_context_set_fill_color(out, (n_GColor) {.argb = 0b11111111});
     n_graphics_context_set_text_color(out, (n_GColor) {.argb = 0b11000000});
-    // n_graphics_context_set_compositing_mode(out, )
+    n_graphics_context_set_compositing_mode(out, n_GCompOpAssign);
     n_graphics_context_set_stroke_caps(out, true);
     n_graphics_context_set_antialiased(out, true);
     n_graphics_context_set_stroke_width(out, 1);
@@ -122,7 +123,7 @@ static n_GContext * n_root_graphics_context_create() {
     n_graphics_context_set_stroke_color(out, (n_GColor) {.argb = 0b11000000});
     n_graphics_context_set_fill_color(out, (n_GColor) {.argb = 0b11111111});
     n_graphics_context_set_text_color(out, (n_GColor) {.argb = 0b11000000});
-    // n_graphics_context_set_compositing_mode(out, )
+    n_graphics_context_set_compositing_mode(out, n_GCompOpAssign);
     n_graphics_context_set_stroke_caps(out, true);
     n_graphics_context_set_antialiased(out, true);
     n_graphics_context_set_stroke_width(out, 1);

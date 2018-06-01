@@ -108,3 +108,6 @@ n_GBitmap *n_gbitmap_create_palettized_from_1bit(const n_GBitmap *src_bitmap);
 
 //! Destroy a \ref n_GBitmap.
 void n_gbitmap_destroy(n_GBitmap *bitmap);
+
+//! Draws a bitmap into the graphics context, inside the specified rectangle.
+void n_graphics_draw_bitmap_in_rect(struct n_GContext *ctx, const n_GBitmap *bitmap, n_GRect rect);

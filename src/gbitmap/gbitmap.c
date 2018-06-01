@@ -1,5 +1,7 @@
 #include "gbitmap.h"
 #include "macros.h"
+#include "context.h"
+#include "blit.h"
 
 static const uint8_t n_prv_palette_size[] = {
     [n_GBitmapFormat1Bit] = 0,
@@ -198,4 +200,40 @@ void n_gbitmap_destroy(n_GBitmap *bitmap) {
         }
         NGFX_PREFERRED_free(bitmap);
     }
+}
+
+void n_graphics_draw_bitmap_in_rect(n_GContext *ctx, const n_GBitmap *bitmap, n_GRect original_bounds) {
+    n_GRect screen_rect = n_GRect(0, 0, __SCREEN_WIDTH, __SCREEN_HEIGHT);
+    n_GRect bounds = original_bounds;
+    n_grect_standardize(bounds);
+    n_grect_clip(&bounds, &screen_rect);
+    if (ctx == NULL || bitmap == NULL ||
+        bounds.size.w == 0 || bounds.size.h == 0 ||
+        bitmap->bounds.size.w == 0 || bitmap->bounds.size.h == 0)
+        return; // nothing to draw
+    n_GPoint src_start = bitmap->bounds.origin;
+    src_start.x += (bounds.origin.x - original_bounds.origin.x) % bitmap->bounds.size.w;
+    src_start.y += (bounds.origin.y - original_bounds.origin.y) % bitmap->bounds.size.h;
+
+    n_GCompOp comp_op = ctx->comp_op;
+#ifdef PBL_BW
+// Oh I don't know anymore D:
+#else
+    switch (bitmap->format) {
+        case n_GBitmapFormat1Bit:
+        case n_GBitmapFormat1BitPalette:
+        case n_GBitmapFormat2BitPalette:
+        case n_GBitmapFormat4BitPalette:
+            n_graphics_blit_palette(ctx, bitmap, bounds, src_start);
+            break;
+
+        case n_GBitmapFormat8Bit:
+        case n_GBitmapFormat8BitCircular:
+            if (comp_op == n_GCompOpAssign)
+                n_graphics_blit_mem_copy(ctx, bitmap, bounds, src_start);
+            else
+                n_graphics_blit_blend(ctx, bitmap, bounds, src_start);
+            break;
+    }
+#endif
 }
