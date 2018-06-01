@@ -43,7 +43,22 @@ void n_graphics_blit_mem_copy(struct n_GContext *ctx, n_GBitmap *bitmap,
 
 void n_graphics_blit_blend(struct n_GContext *ctx, n_GBitmap *bitmap,
     n_GRect bounds, n_GPoint src_start) {
+    n_GColor *fb_line = (n_GColor*)ctx->fbuf + bounds.origin.x +
+        bounds.origin.y * __SCREEN_FRAMEBUFFER_ROW_BYTE_AMOUNT;
 
+    for (int y = 0; y < bounds.size.h; y++) {
+        n_GColor *fb_pixel = fb_line;
+        n_GColor *bm_line = bitmap->addr +
+            ((src_start.y + y) % bitmap->bounds.size.h) * bitmap->row_size_bytes;
+
+        for (int x = 0; x < bounds.size.w; x++) {
+            n_GColor bm_pixel = bm_line[(src_start.x + x) % bitmap->bounds.size.w];
+            *fb_pixel = n_gcolor_blend(*fb_pixel, bm_pixel);
+            fb_pixel++;
+        }
+
+        fb_line += __SCREEN_FRAMEBUFFER_ROW_BYTE_AMOUNT;
+    }
 }
 
 void n_graphics_blit_palette(struct n_GContext *ctx, n_GBitmap *bitmap,
