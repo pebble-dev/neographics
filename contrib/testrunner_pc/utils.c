@@ -28,7 +28,7 @@ bool saveFramebufferToPNG(n_GContext *ctx, const char *filename) {
 #else
     uint32_t byteCount = __SCREEN_FRAMEBUFFER_ROW_BYTE_AMOUNT * __SCREEN_HEIGHT;
     n_GColor *fbColorPtr = (n_GColor*)ctx->fbuf;
-    while (--byteCount) {
+    while (byteCount--) {
         outColorPtr[0] = fbColorPtr->r * 85;
         outColorPtr[1] = fbColorPtr->g * 85;
         outColorPtr[2] = fbColorPtr->b * 85;

@@ -60,7 +60,7 @@ const char *getResourceNameById(uint32_t resource_id) {
     uint32_t *id_ptr = context->res_mapping.ids;
     uint32_t i;
 
-    for (i = 0; i < context->res_mapping.count; i++) {
+    for (i = 0; i < context->res_mapping.count; i++, id_ptr++) {
         if (*id_ptr == resource_id) {
             return context->res_mapping.names[i];
         }
