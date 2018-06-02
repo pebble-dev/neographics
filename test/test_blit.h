@@ -255,22 +255,6 @@ NGFX_BIG_TEST(Blit, BiggerThanScreen,
     NGFX_ASSERT_SCREEN(1);
 )
 
-NGFX_BIG_TEST(Blit, CompOpSet,
-    ngfxtest_map_resource("blit_compopset.png", 1);
-    ngfxtest_map_resource("blit_smiley.png", 2);
-    DRAW_CHECKERBOARD;
-
-    ngfxtest_load_image(fullsmiley, 2);
-    n_GBitmap *smiley = n_gbitmap_create_as_sub_bitmap(fullsmiley, n_GRect(
-        SMILEY_SUB_X, SMILEY_SUB_Y, SMILEY_WIDTH, SMILEY_HEIGHT
-    ));
-    n_graphics_context_set_compositing_mode(context, n_GCompOpSet);
-    n_graphics_draw_bitmap_in_rect(context, smiley, n_GRect(16, 16, SMILEY_WIDTH, SMILEY_HEIGHT));
-    n_gbitmap_destroy(smiley);
-
-    NGFX_ASSERT_SCREEN(1);
-)
-
 NGFX_BIG_TEST(Blit, CompOpInverted,
     ngfxtest_map_resource("blit_compopinverted.png", 1);
     ngfxtest_map_resource("blit_smiley.png", 2);
@@ -329,6 +313,22 @@ NGFX_BIG_TEST(Blit, CompOpClear,
         SMILEY_SUB_X, SMILEY_SUB_Y, SMILEY_WIDTH, SMILEY_HEIGHT
     ));
     n_graphics_context_set_compositing_mode(context, n_GCompOpClear);
+    n_graphics_draw_bitmap_in_rect(context, smiley, n_GRect(16, 16, SMILEY_WIDTH, SMILEY_HEIGHT));
+    n_gbitmap_destroy(smiley);
+
+    NGFX_ASSERT_SCREEN(1);
+)
+
+NGFX_BIG_TEST(Blit, CompOpSet,
+    ngfxtest_map_resource("blit_compopset.png", 1);
+    ngfxtest_map_resource("blit_smiley.png", 2);
+    DRAW_CHECKERBOARD;
+
+    ngfxtest_load_image_ex(fullsmiley, 2, n_GBitmapFormat1Bit);
+    n_GBitmap *smiley = n_gbitmap_create_as_sub_bitmap(fullsmiley, n_GRect(
+        SMILEY_SUB_X, SMILEY_SUB_Y, SMILEY_WIDTH, SMILEY_HEIGHT
+    ));
+    n_graphics_context_set_compositing_mode(context, n_GCompOpSet);
     n_graphics_draw_bitmap_in_rect(context, smiley, n_GRect(16, 16, SMILEY_WIDTH, SMILEY_HEIGHT));
     n_gbitmap_destroy(smiley);
 

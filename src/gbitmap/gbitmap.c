@@ -211,9 +211,10 @@ void n_graphics_draw_bitmap_in_rect(n_GContext *ctx, const n_GBitmap *bitmap, n_
         bounds.size.w == 0 || bounds.size.h == 0 ||
         bitmap->bounds.size.w == 0 || bitmap->bounds.size.h == 0)
         return; // nothing to draw
-    n_GPoint src_start = bitmap->bounds.origin;
-    src_start.x += (bounds.origin.x - original_bounds.origin.x) % bitmap->bounds.size.w;
-    src_start.y += (bounds.origin.y - original_bounds.origin.y) % bitmap->bounds.size.h;
+    n_GPoint src_offset = {
+        .x = (bounds.origin.x - original_bounds.origin.x) % bitmap->bounds.size.w,
+        .y = (bounds.origin.y - original_bounds.origin.y) % bitmap->bounds.size.h
+    };
 
     n_GCompOp comp_op = ctx->comp_op;
 #ifdef PBL_BW
@@ -224,15 +225,15 @@ void n_graphics_draw_bitmap_in_rect(n_GContext *ctx, const n_GBitmap *bitmap, n_
         case n_GBitmapFormat1BitPalette:
         case n_GBitmapFormat2BitPalette:
         case n_GBitmapFormat4BitPalette:
-            n_graphics_blit_palette(ctx, bitmap, bounds, src_start);
+            n_graphics_blit_palette(ctx, bitmap, bounds, src_offset);
             break;
 
         case n_GBitmapFormat8Bit:
         case n_GBitmapFormat8BitCircular:
             if (comp_op == n_GCompOpAssign)
-                n_graphics_blit_mem_copy(ctx, bitmap, bounds, src_start);
+                n_graphics_blit_mem_copy(ctx, bitmap, bounds, src_offset);
             else
-                n_graphics_blit_blend(ctx, bitmap, bounds, src_start);
+                n_graphics_blit_blend(ctx, bitmap, bounds, src_offset);
             break;
     }
 #endif
