@@ -28,6 +28,12 @@
 #define BIG_SMILEY_WIDTH 250
 #define BIG_SMILEY_HEIGHT 228
 
+#ifdef PBL_BW
+#define STANDARD_BITMAP_FORMAT n_GBitmapFormat1Bit
+#else
+#define STANDARD_BITMAP_FORMAT n_GBitmapFormat8Bit
+#endif
+
 #define DRAW_CHECKERBOARD do { \
         n_graphics_context_set_fill_color(context, n_GColorBlack); \
         n_graphics_fill_rect(context, n_GRect(0, 0, __SCREEN_WIDTH, __SCREEN_HEIGHT), 0, n_GCornerNone); \
@@ -210,7 +216,7 @@ NGFX_BIG_TEST(Blit, PartiallyClipped,
     ngfxtest_map_resource("blit_smiley.png", 2);
     DRAW_CHECKERBOARD;
 
-    ngfxtest_load_image(fullsmiley, 2);
+    ngfxtest_load_image_ex(fullsmiley, 2, STANDARD_BITMAP_FORMAT);
     n_GBitmap *smiley = n_gbitmap_create_as_sub_bitmap(fullsmiley, n_GRect(
         SMILEY_SUB_X, SMILEY_SUB_Y, SMILEY_WIDTH, SMILEY_HEIGHT
     ));
@@ -226,7 +232,7 @@ NGFX_BIG_TEST(Blit, FullyClipped,
     ngfxtest_map_resource("blit_smiley.png", 2);
     DRAW_CHECKERBOARD;
 
-    ngfxtest_load_image(fullsmiley, 2);
+    ngfxtest_load_image_ex(fullsmiley, 2, STANDARD_BITMAP_FORMAT);
     n_GBitmap *smiley = n_gbitmap_create_as_sub_bitmap(fullsmiley, n_GRect(
         SMILEY_SUB_X, SMILEY_SUB_Y, SMILEY_WIDTH, SMILEY_HEIGHT
     ));
@@ -244,7 +250,7 @@ NGFX_BIG_TEST(Blit, BiggerThanScreen,
     ngfxtest_map_resource("blit_bigsmiley.png", 2);
     DRAW_CHECKERBOARD;
 
-    ngfxtest_load_image(bigsmiley, 2);
+    ngfxtest_load_image_ex(bigsmiley, 2, STANDARD_BITMAP_FORMAT);
     n_graphics_context_set_compositing_mode(context, n_GCompOpAssign);
     n_graphics_draw_bitmap_in_rect(context, bigsmiley, n_GRect(
         -30, -30, BIG_SMILEY_WIDTH, BIG_SMILEY_HEIGHT

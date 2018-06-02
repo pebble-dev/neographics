@@ -216,10 +216,17 @@ void n_graphics_draw_bitmap_in_rect(n_GContext *ctx, const n_GBitmap *bitmap, n_
         .y = (bounds.origin.y - original_bounds.origin.y) % bitmap->bounds.size.h
     };
 
-    n_GCompOp comp_op = ctx->comp_op;
 #ifdef PBL_BW
-// Oh I don't know anymore D:
+    switch (bitmap->format) {
+        case n_GBitmapFormat1Bit:
+            n_graphics_blit_comp(ctx, bitmap, bounds, src_offset);
+            break;
+
+        default:
+            break;
+    }
 #else
+    n_GCompOp comp_op = ctx->comp_op;
     switch (bitmap->format) {
         case n_GBitmapFormat1Bit:
         case n_GBitmapFormat1BitPalette:

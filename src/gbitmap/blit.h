@@ -27,13 +27,6 @@
 void n_graphics_blit_comp(struct n_GContext *ctx, const n_GBitmap *bitmap,
     n_GRect bounds, n_GPoint src_offset);
 
-/*!
- * Source pixels have to be converted to 1Bit before they can be set
- * Used for 8Bit->BW
- */
-void n_graphics_blit_src_threshold(struct n_GContext *ctx, const n_GBitmap *bitmap,
-    n_GRect bounds, n_GPoint src_offset);
-
 #else
 
 /*!
