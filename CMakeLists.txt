@@ -110,7 +110,7 @@ set(sources_test_neographics
     test/test_test.h
     test/test_types.h
     test/test_gbitmap.h
-	test/test_blit.h
+    test/test_blit.h
 
     contrib/testrunner_pc/testrunner.h
     contrib/testrunner_pc/testrunner.c
