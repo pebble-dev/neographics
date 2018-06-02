@@ -1,7 +1,11 @@
 #ifndef PBL_BW
 #include "blit.h"
-#include "../types.h"
-#include "../context.h"
+#include "types.h"
+#include "context.h"
+
+#ifndef min
+#define min(a,b) ((a) < (b) ? (a) : (b))
+#endif
 
 void n_graphics_blit_mem_copy(struct n_GContext *ctx, const n_GBitmap *bitmap,
     n_GRect bounds, n_GPoint src_offset) {
