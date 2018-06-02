@@ -24,14 +24,14 @@
 * Pixels are set one by one with compositing effects applied.
 * Used for 1Bit->BW
 */
-void n_graphics_blit_comp(struct n_GContext *ctx, n_GBitmap *bitmap,
+void n_graphics_blit_comp(struct n_GContext *ctx, const n_GBitmap *bitmap,
     n_GRect bounds, n_GPoint src_offset);
 
 /*!
  * Source pixels have to be converted to 1Bit before they can be set
  * Used for 8Bit->BW
  */
-void n_graphics_blit_src_threshold(struct n_GContext *ctx, n_GBitmap *bitmap,
+void n_graphics_blit_src_threshold(struct n_GContext *ctx, const n_GBitmap *bitmap,
     n_GRect bounds, n_GPoint src_offset);
 
 #else
@@ -40,14 +40,14 @@ void n_graphics_blit_src_threshold(struct n_GContext *ctx, n_GBitmap *bitmap,
  * Bitmap pixels can be copied as is and we may do it fast
  * Used for 8Bit->Color with CompOp set to Assign
  */
-void n_graphics_blit_mem_copy(struct n_GContext *ctx, n_GBitmap *bitmap,
+void n_graphics_blit_mem_copy(struct n_GContext *ctx, const n_GBitmap *bitmap,
     n_GRect bounds, n_GPoint src_offset);
 
 /*!
  * Bitmap pixels are blended one by one into the framebuffer, also: transparency
  * Used for 8Bit->Color with CompOp set to Set
  */
-void n_graphics_blit_blend(struct n_GContext *ctx, n_GBitmap *bitmap,
+void n_graphics_blit_blend(struct n_GContext *ctx, const n_GBitmap *bitmap,
     n_GRect bounds, n_GPoint src_offset);
 
 /*!
@@ -55,7 +55,7 @@ void n_graphics_blit_blend(struct n_GContext *ctx, n_GBitmap *bitmap,
  * optionally color blended
  * Used for 1Bit->Color and xBitPalette->Color with any CompOp
  */
-void n_graphics_blit_palette(struct n_GContext *ctx, n_GBitmap *bitmap,
+void n_graphics_blit_palette(struct n_GContext *ctx, const n_GBitmap *bitmap,
     n_GRect bounds, n_GPoint src_offset);
 
 #endif

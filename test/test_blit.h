@@ -9,13 +9,11 @@
  *  - compositing mode (on Aplite all, on Basalt/Chalk Assign and Set)
  * with a combination count of 1080 only some are actually tested :)
  *
- * the test structure is always the same though:
+ * the test structure is always the same:
  *  - manually draw b/w checkerboard pattern on the screen
  *  - set unique test parameters
  *  - draw the test image
  *  - compare the whole screen against an expected output
- * 
- * to make it extra hard always take a sub-bitmap
  */
 
 #include "test.h"

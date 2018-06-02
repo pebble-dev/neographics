@@ -3,7 +3,7 @@
 #include "../types.h"
 #include "../context.h"
 
-void n_graphics_blit_mem_copy(struct n_GContext *ctx, n_GBitmap *bitmap,
+void n_graphics_blit_mem_copy(struct n_GContext *ctx, const n_GBitmap *bitmap,
     n_GRect bounds, n_GPoint src_offset) {
     uint8_t *fb_line = ctx->fbuf + bounds.origin.x +
         bounds.origin.y * __SCREEN_FRAMEBUFFER_ROW_BYTE_AMOUNT;
@@ -40,7 +40,7 @@ void n_graphics_blit_mem_copy(struct n_GContext *ctx, n_GBitmap *bitmap,
     }
 }
 
-void n_graphics_blit_blend(struct n_GContext *ctx, n_GBitmap *bitmap,
+void n_graphics_blit_blend(struct n_GContext *ctx, const n_GBitmap *bitmap,
     n_GRect bounds, n_GPoint src_offset) {
     n_GColor *fb_line = (n_GColor*)ctx->fbuf + bounds.origin.x +
         bounds.origin.y * __SCREEN_FRAMEBUFFER_ROW_BYTE_AMOUNT;
@@ -62,7 +62,7 @@ void n_graphics_blit_blend(struct n_GContext *ctx, n_GBitmap *bitmap,
     }
 }
 
-void n_graphics_blit_palette(struct n_GContext *ctx, n_GBitmap *bitmap,
+void n_graphics_blit_palette(struct n_GContext *ctx, const n_GBitmap *bitmap,
     n_GRect bounds, n_GPoint src_offset) {
     static const uint8_t bw_palettes[][2] = { // uint8 is easier to declare for constants
         [n_GCompOpAssign] =         { n_GColorBlackARGB8, n_GColorWhiteARGB8 },
