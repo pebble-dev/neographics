@@ -12,6 +12,11 @@
 #include <string.h>
 #include <inttypes.h>
 
+#define NGFX_PREFERRED_free free
+#define NGFX_PREFERRED_calloc calloc
+#define NGFX_PREFERRED_malloc malloc
+#define NGFX_PREFERRED_resource_load resource_load
+
 // Math
 
 #define TRIG_MAX_RATIO 0xffff

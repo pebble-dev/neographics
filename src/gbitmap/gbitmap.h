@@ -20,10 +20,10 @@ typedef struct n_GBitmap
     n_GColor *palette;
     uint8_t palette_size;
     uint16_t row_size_bytes;
-    bool free_palette_on_destroy; // TODo move me to a bit status register above for size
-    bool free_data_on_destroy; // TODo move me to a bit status register above for size
+    uint8_t free_palette_on_destroy; // TODo move me to a bit status register above for size
+    uint8_t free_data_on_destroy; // TODo move me to a bit status register above for size
     n_GRect bounds;
-    n_GBitmapFormat format;
+    uint8_t format;
 } n_GBitmap;
 
 //! Get the number of bytes per row in the bitmap data for the given \ref n_GBitmap.
