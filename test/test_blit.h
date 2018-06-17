@@ -80,6 +80,7 @@ NGFX_BIG_TEST(Blit, Assign8Bit,
 
     NGFX_ASSERT_SCREEN(1);
 )
+#endif // !PBL_BW
 
 NGFX_BIG_TEST(Blit, Assign1BitPalette,
     ngfxtest_map_resource("blit_assign1bitpalette.png", 1);
@@ -128,7 +129,6 @@ NGFX_BIG_TEST(Blit, Assign4BitPalette,
 
     NGFX_ASSERT_SCREEN(1);
 )
-#endif // !PBL_BW
 
 NGFX_BIG_TEST(Blit, Tiling1Bit,
     ngfxtest_map_resource("blit_tiling1bit.png", 1);
@@ -147,30 +147,13 @@ NGFX_BIG_TEST(Blit, Tiling1Bit,
     NGFX_ASSERT_SCREEN(1);
 )
 
-#ifndef PBL_BW // bw currently only allows 1bit bitmaps
+#ifndef PBL_BW
 NGFX_BIG_TEST(Blit, Tiling8Bit,
     ngfxtest_map_resource("blit_tiling8bit.png", 1);
     ngfxtest_map_resource("blit_smiley.png", 2);
     DRAW_CHECKERBOARD;
 
     ngfxtest_load_image_ex(fullsmiley, 2, n_GBitmapFormat8Bit);
-    n_GBitmap *smiley = n_gbitmap_create_as_sub_bitmap(fullsmiley, n_GRect(
-        SMILEY_SUB_X, SMILEY_SUB_Y, SMILEY_WIDTH, SMILEY_HEIGHT
-    ));
-    n_graphics_draw_bitmap_in_rect(context, smiley, n_GRect(
-        -SMILEY_WIDTH/2, -SMILEY_HEIGHT/2, 3 * SMILEY_WIDTH, 3 * SMILEY_HEIGHT
-    ));
-    n_gbitmap_destroy(smiley);
-
-    NGFX_ASSERT_SCREEN(1);
-)
-
-NGFX_BIG_TEST(Blit, Tiling4BitPalette,
-    ngfxtest_map_resource("blit_tiling4bitpalette.png", 1);
-    ngfxtest_map_resource("blit_smiley.png", 2);
-    DRAW_CHECKERBOARD;
-
-    ngfxtest_load_image_ex(fullsmiley, 2, n_GBitmapFormat4BitPalette);
     n_GBitmap *smiley = n_gbitmap_create_as_sub_bitmap(fullsmiley, n_GRect(
         SMILEY_SUB_X, SMILEY_SUB_Y, SMILEY_WIDTH, SMILEY_HEIGHT
     ));
@@ -195,6 +178,24 @@ NGFX_BIG_TEST(Blit, Blending8Bit,
 
     NGFX_ASSERT_SCREEN(1);
 )
+#endif // !PBL_BW
+
+NGFX_BIG_TEST(Blit, Tiling4BitPalette,
+    ngfxtest_map_resource("blit_tiling4bitpalette.png", 1);
+    ngfxtest_map_resource("blit_smiley.png", 2);
+    DRAW_CHECKERBOARD;
+
+    ngfxtest_load_image_ex(fullsmiley, 2, n_GBitmapFormat4BitPalette);
+    n_GBitmap *smiley = n_gbitmap_create_as_sub_bitmap(fullsmiley, n_GRect(
+        SMILEY_SUB_X, SMILEY_SUB_Y, SMILEY_WIDTH, SMILEY_HEIGHT
+    ));
+    n_graphics_draw_bitmap_in_rect(context, smiley, n_GRect(
+        -SMILEY_WIDTH/2, -SMILEY_HEIGHT/2, 3 * SMILEY_WIDTH, 3 * SMILEY_HEIGHT
+    ));
+    n_gbitmap_destroy(smiley);
+
+    NGFX_ASSERT_SCREEN(1);
+)
 
 NGFX_BIG_TEST(Blit, Blending4BitPalette,
     ngfxtest_map_resource("blit_blending4bitpalette.png", 1);
@@ -209,7 +210,6 @@ NGFX_BIG_TEST(Blit, Blending4BitPalette,
 
     NGFX_ASSERT_SCREEN(1);
 )
-#endif // !PBL_BW
 
 NGFX_BIG_TEST(Blit, PartiallyClipped,
     ngfxtest_map_resource("blit_partiallyclipped.png", 1);

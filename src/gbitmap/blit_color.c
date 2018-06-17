@@ -78,27 +78,13 @@ void n_graphics_blit_palette(struct n_GContext *ctx, const n_GBitmap *bitmap,
     };
 
     // Determine actual palette to use and stuff like bit length/mask 
-    uint8_t bits_per_pixel;
-    const n_GColor* palette = bitmap->palette;
-    switch (bitmap->format) {
-        case n_GBitmapFormat1Bit:
-            bits_per_pixel = 1;
-            palette = (const n_GColor*)bw_palettes[ctx->comp_op];
-            break;
-        case n_GBitmapFormat1BitPalette:
-            bits_per_pixel = 1;
-            break;
-        case n_GBitmapFormat2BitPalette:
-            bits_per_pixel = 2;
-            break;
-        case n_GBitmapFormat4BitPalette:
-            bits_per_pixel = 4;
-            break;
-        default:
-            return;
-    }
+    uint8_t bits_per_pixel = n_gbitmapformat_get_bits_per_pixel(bitmap->format);
     uint8_t index_mask = (1 << bits_per_pixel) - 1;
     uint8_t pixels_per_byte = 8 / bits_per_pixel;
+    const n_GColor* palette = bitmap->palette;
+    if (bitmap->format == n_GBitmapFormat1Bit) {
+        palette = (const n_GColor*)bw_palettes[ctx->comp_op];
+    }
 
     // Blit the bitmap
     n_GColor *fb_line = (n_GColor*)ctx->fbuf + bounds.origin.x +

@@ -26,6 +26,11 @@ typedef struct n_GBitmap
     uint8_t format;
 } n_GBitmap;
 
+//! Get the number of bits per pixel in the bitmap data for the given \ref n_GBitmapFormat.
+//! @param format A bitmap format descriptor
+//! @return The number of bits per pixel
+uint8_t n_gbitmapformat_get_bits_per_pixel(n_GBitmapFormat format);
+
 //! Get the number of bytes per row in the bitmap data for the given \ref n_GBitmap.
 //! @param bitmap A pointer to the n_GBitmap
 //! @return The number of bytes per row

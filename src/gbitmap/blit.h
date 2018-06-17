@@ -27,6 +27,13 @@
 void n_graphics_blit_comp(struct n_GContext *ctx, const n_GBitmap *bitmap,
     n_GRect bounds, n_GPoint src_offset);
 
+/*!
+ * Pixels are set one by one with alpha testing.
+ * Used for xBitPalette->BW
+ */
+void n_graphics_blit_alpha(struct n_GContext *ctx, const n_GBitmap *bitmap,
+    n_GRect bounds, n_GPoint src_offset);
+
 #else
 
 /*!
