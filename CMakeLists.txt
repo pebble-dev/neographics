@@ -52,6 +52,9 @@ set(sources_neographics
   src/fonts/fonts.h
   src/gbitmap/gbitmap.c
   src/gbitmap/gbitmap.h
+  src/gbitmap/blit.h
+  src/gbitmap/blit_color.c
+  src/gbitmap/blit_bw.c
   src/path/path.c
   src/path/path.h
   src/primitives/circle.c
@@ -107,6 +110,7 @@ set(sources_test_neographics
     test/test_test.h
     test/test_types.h
     test/test_gbitmap.h
+    test/test_blit.h
 
     contrib/testrunner_pc/testrunner.h
     contrib/testrunner_pc/testrunner.c

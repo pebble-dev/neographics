@@ -20,6 +20,15 @@
  *  @{
  */
 
+ //! Values to specify how the source image should be composited onto the destination image.
+typedef enum {
+    n_GCompOpAssign,         //<! dst = src
+    n_GCompOpAssignInverted, //<! dst = ~src
+    n_GCompOpOr,             //<! dst = dst | src
+    n_GCompOpAnd,            //<! dst = dst & src
+    n_GCompOpClear,          //<! dst & ~src
+    n_GCompOpSet,            //<! dst | ~src
+} n_GCompOp;
 
 /*!
  * Internal representation of the graphics context itself. Created via
@@ -33,6 +42,7 @@ typedef struct n_GContext {
     bool antialias;
     bool stroke_caps;
     uint16_t stroke_width;
+    n_GCompOp comp_op;
 #ifndef NGFX_IS_CORE
     GContext * underlying_context; // This is necessary where direct framebuffer
                                    // access doens't exist (for example, in the
@@ -57,7 +67,10 @@ void n_graphics_context_set_fill_color(n_GContext * ctx, n_GColor color);
  * Sets the n_GColor used to draw text.
  */
 void n_graphics_context_set_text_color(n_GContext * ctx, n_GColor color);
-// void n_graphics_context_set_compositing_mode(n_GContext * ctx, ...);
+/*!
+ * Sets the compositing mode used to draw bitmaps.
+ */
+void n_graphics_context_set_compositing_mode(n_GContext * ctx, n_GCompOp comp_op);
 /*!
  * Sets whether stroke caps should be drawn.
  */

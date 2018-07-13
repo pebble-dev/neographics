@@ -10,10 +10,12 @@
 `-----------------------------------------------------------------------------*/
 
 #ifdef NGFX_IS_CORE
-#define NGFX_PREFERRED_free                   (free)
-#define NGFX_PREFERRED_calloc                 (calloc)
-#define NGFX_PREFERRED_malloc                 (malloc)
-#define NGFX_PREFERRED_resource_load(a, b, c) (resource_load((b), (a), (c)))
+#if !defined NGFX_PREFERRED_free || \
+    !defined NGFX_PREFERRED_calloc || \
+    !defined NGFX_PREFERRED_malloc || \
+    !defined NGFX_PREFERRED_resource_load
+    #error "The macros for neographics are not defined!"
+#endif
 #else
 #define NGFX_PREFERRED_free          (free)
 #define NGFX_PREFERRED_calloc        (calloc)

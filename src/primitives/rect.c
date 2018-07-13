@@ -167,7 +167,7 @@ static void n_graphics_fill_0rad_rect_bounded(n_GContext * ctx, n_GRect rect,
 #else
     uint8_t color = ctx->fill_color.argb;
 #endif
-    int16_t right_indent = rect.origin.x + rect.size.w,
+    int16_t right_indent = rect.origin.x + rect.size.w - 1,
             max_y = rect.origin.y + rect.size.h - 1;
     for (int16_t r = rect.origin.y; r <= max_y; r++) {
         n_graphics_prv_draw_row(ctx->fbuf, r,

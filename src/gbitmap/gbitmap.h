@@ -20,11 +20,16 @@ typedef struct n_GBitmap
     n_GColor *palette;
     uint8_t palette_size;
     uint16_t row_size_bytes;
-    bool free_palette_on_destroy; // TODo move me to a bit status register above for size
-    bool free_data_on_destroy; // TODo move me to a bit status register above for size
+    uint8_t free_palette_on_destroy; // TODo move me to a bit status register above for size
+    uint8_t free_data_on_destroy; // TODo move me to a bit status register above for size
     n_GRect bounds;
-    n_GBitmapFormat format;
+    uint8_t format;
 } n_GBitmap;
+
+//! Get the number of bits per pixel in the bitmap data for the given \ref n_GBitmapFormat.
+//! @param format A bitmap format descriptor
+//! @return The number of bits per pixel
+uint8_t n_gbitmapformat_get_bits_per_pixel(n_GBitmapFormat format);
 
 //! Get the number of bytes per row in the bitmap data for the given \ref n_GBitmap.
 //! @param bitmap A pointer to the n_GBitmap
@@ -108,3 +113,6 @@ n_GBitmap *n_gbitmap_create_palettized_from_1bit(const n_GBitmap *src_bitmap);
 
 //! Destroy a \ref n_GBitmap.
 void n_gbitmap_destroy(n_GBitmap *bitmap);
+
+//! Draws a bitmap into the graphics context, inside the specified rectangle.
+void n_graphics_draw_bitmap_in_rect(struct n_GContext *ctx, const n_GBitmap *bitmap, n_GRect rect);

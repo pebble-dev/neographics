@@ -1,5 +1,7 @@
 #include "gbitmap.h"
 #include "macros.h"
+#include "context.h"
+#include "blit.h"
 
 static const uint8_t n_prv_palette_size[] = {
     [n_GBitmapFormat1Bit] = 0,
@@ -9,6 +11,18 @@ static const uint8_t n_prv_palette_size[] = {
     [n_GBitmapFormat4BitPalette] = 16,
     [n_GBitmapFormat8BitCircular] = 0,
 };
+
+uint8_t n_gbitmapformat_get_bits_per_pixel(n_GBitmapFormat format) {
+    static const uint8_t n_prv_bits_per_pixel[] = {
+        [n_GBitmapFormat1Bit] = 1,
+        [n_GBitmapFormat8Bit] = 8,
+        [n_GBitmapFormat1BitPalette] = 1,
+        [n_GBitmapFormat2BitPalette] = 2,
+        [n_GBitmapFormat4BitPalette] = 4,
+        [n_GBitmapFormat8BitCircular] = 8
+    };
+    return n_prv_bits_per_pixel[format];
+}
 
 uint16_t n_gbitmap_get_bytes_per_row(const n_GBitmap *bitmap) {
     return bitmap->row_size_bytes;
@@ -76,24 +90,8 @@ static n_GBitmap *n_prv_gbitmap_create_with_palette(n_GSize size, n_GBitmapForma
         return NULL;
     }
     
-    switch (format) {
-        case n_GBitmapFormat1Bit:
-        case n_GBitmapFormat1BitPalette:
-            bitmap->row_size_bytes = (size.w + 7) / 8;
-            break;
-        case n_GBitmapFormat2BitPalette:
-            bitmap->row_size_bytes = (size.w * 2 + 7) / 8;
-            break;
-        case n_GBitmapFormat4BitPalette:
-            bitmap->row_size_bytes = (size.w * 4 + 7) / 8;
-            break;
-        case n_GBitmapFormat8Bit:
-        case n_GBitmapFormat8BitCircular:
-        default:
-            bitmap->row_size_bytes = size.w;
-            break;
-    }
-
+    uint8_t bits_per_pixel = n_gbitmapformat_get_bits_per_pixel(format);
+    bitmap->row_size_bytes = (size.w * bits_per_pixel + 7) / 8;
     bitmap->addr = (uint8_t*)NGFX_PREFERRED_malloc(size.h * bitmap->row_size_bytes);
     if (bitmap->addr == NULL) {
         NGFX_PREFERRED_free(bitmap);
@@ -198,4 +196,54 @@ void n_gbitmap_destroy(n_GBitmap *bitmap) {
         }
         NGFX_PREFERRED_free(bitmap);
     }
+}
+
+void n_graphics_draw_bitmap_in_rect(n_GContext *ctx, const n_GBitmap *bitmap, n_GRect original_bounds) {
+    n_GRect screen_rect = n_GRect(0, 0, __SCREEN_WIDTH, __SCREEN_HEIGHT);
+    n_GRect bounds = original_bounds;
+    n_grect_standardize(bounds);
+    n_grect_clip(&bounds, &screen_rect);
+    if (ctx == NULL || bitmap == NULL ||
+        bounds.size.w == 0 || bounds.size.h == 0 ||
+        bitmap->bounds.size.w == 0 || bitmap->bounds.size.h == 0)
+        return; // nothing to draw
+    n_GPoint src_offset = {
+        .x = (bounds.origin.x - original_bounds.origin.x) % bitmap->bounds.size.w,
+        .y = (bounds.origin.y - original_bounds.origin.y) % bitmap->bounds.size.h
+    };
+
+#ifdef PBL_BW
+    switch (bitmap->format) {
+        case n_GBitmapFormat1Bit:
+            n_graphics_blit_comp(ctx, bitmap, bounds, src_offset);
+            break;
+
+        case n_GBitmapFormat1BitPalette:
+        case n_GBitmapFormat2BitPalette:
+        case n_GBitmapFormat4BitPalette:
+            n_graphics_blit_alpha(ctx, bitmap, bounds, src_offset);
+            break;
+
+        default:
+            break;
+    }
+#else
+    n_GCompOp comp_op = ctx->comp_op;
+    switch (bitmap->format) {
+        case n_GBitmapFormat1Bit:
+        case n_GBitmapFormat1BitPalette:
+        case n_GBitmapFormat2BitPalette:
+        case n_GBitmapFormat4BitPalette:
+            n_graphics_blit_palette(ctx, bitmap, bounds, src_offset);
+            break;
+
+        case n_GBitmapFormat8Bit:
+        case n_GBitmapFormat8BitCircular:
+            if (comp_op == n_GCompOpAssign)
+                n_graphics_blit_mem_copy(ctx, bitmap, bounds, src_offset);
+            else
+                n_graphics_blit_blend(ctx, bitmap, bounds, src_offset);
+            break;
+    }
+#endif
 }

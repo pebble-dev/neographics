@@ -75,8 +75,10 @@ int main(int argc, char *argv[]) {
     const n_Test *current_test = tests;
     while (current_test->func != NULL) {
         if (stb_stristr(current_test->module, arg_include_module) == NULL ||
-            stb_stristr(current_test->name, arg_include_test) == NULL)
+            stb_stristr(current_test->name, arg_include_test) == NULL) {
+            current_test++;
             continue;
+        }
 
         test_count++;
         bool should_fail = strcmp(current_test->module, "Test") == 0 &&

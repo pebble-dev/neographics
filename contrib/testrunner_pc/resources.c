@@ -24,6 +24,8 @@ bool initTestRunnerContext(TestRunnerContext *runner_context) {
 
 void resetTestRunnerContext(TestRunnerContext *runner_context, const char *module, const char *name) {
     memset(runner_context->framebuffer, 0, SCREEN_FRAMEBUFFER_SIZE);
+    n_graphics_context_destroy(runner_context->context);
+    runner_context->context = n_graphics_context_from_buffer(runner_context->framebuffer);
 
     runner_context->res_mapping.count = 0;
     for (int i = 0; i < MAX_LOADED_IMAGES; i++) {
@@ -60,7 +62,7 @@ const char *getResourceNameById(uint32_t resource_id) {
     uint32_t *id_ptr = context->res_mapping.ids;
     uint32_t i;
 
-    for (i = 0; i < context->res_mapping.count; i++) {
+    for (i = 0; i < context->res_mapping.count; i++, id_ptr++) {
         if (*id_ptr == resource_id) {
             return context->res_mapping.names[i];
         }
