@@ -2,6 +2,8 @@
 #include <pebble.h>
 #include "types.h"
 
+struct n_GContext;
+
 //! The format of a GBitmap can either be 1-bit or 8-bit.
 typedef enum n_GBitmapFormat {
     n_GBitmapFormat1Bit = 0,     //<! 1-bit black and white. 0 = black, 1 = white.
