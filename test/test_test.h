@@ -150,10 +150,10 @@ NGFX_TEST(Test, LoadImage,
     {
         ngfxtest_load_image_ex(checker, 1, n_GBitmapFormat4BitPalette);
         n_GColor colors[4] = {
-            checker->palette[checker->addr[0] & 15],
             checker->palette[checker->addr[0] >> 4],
-            checker->palette[checker->addr[1] & 15],
-            checker->palette[checker->addr[1] >> 4]
+            checker->palette[checker->addr[0] & 15],
+            checker->palette[checker->addr[1] >> 4],
+            checker->palette[checker->addr[1] & 15]
         };
 
         NGFX_ASSERT_EQ(checker->format, n_GBitmapFormat4BitPalette);
@@ -165,10 +165,10 @@ NGFX_TEST(Test, LoadImage,
     {
         ngfxtest_load_image_ex(checker, 1, n_GBitmapFormat2BitPalette);
         n_GColor colors[4] = {
-            checker->palette[(checker->addr[0] >> 0) & 3],
-            checker->palette[(checker->addr[0] >> 2) & 3],
-            checker->palette[(checker->addr[1] >> 0) & 3],
-            checker->palette[(checker->addr[1] >> 2) & 3]
+            checker->palette[(checker->addr[0] >> 6) & 3],
+            checker->palette[(checker->addr[0] >> 4) & 3],
+            checker->palette[(checker->addr[1] >> 6) & 3],
+            checker->palette[(checker->addr[1] >> 4) & 3]
         };
 
         NGFX_ASSERT_EQ(checker->format, n_GBitmapFormat2BitPalette);
@@ -180,10 +180,10 @@ NGFX_TEST(Test, LoadImage,
     {
         ngfxtest_load_image_ex(checker, 1, n_GBitmapFormat1BitPalette);
         n_GColor colors[4] = {
-            checker->palette[(checker->addr[0] >> 0) & 1],
-            checker->palette[(checker->addr[0] >> 1) & 1],
-            checker->palette[(checker->addr[1] >> 0) & 1],
-            checker->palette[(checker->addr[1] >> 1) & 1]
+            checker->palette[(checker->addr[0] >> 7) & 1],
+            checker->palette[(checker->addr[0] >> 6) & 1],
+            checker->palette[(checker->addr[1] >> 7) & 1],
+            checker->palette[(checker->addr[1] >> 6) & 1]
         };
 
         NGFX_ASSERT_EQ(checker->format, n_GBitmapFormat1BitPalette);
@@ -194,9 +194,11 @@ NGFX_TEST(Test, LoadImage,
     }
     {
         ngfxtest_load_image_ex(checker, 1, n_GBitmapFormat1Bit);
+        int pitch = checker->row_size_bytes;
 
+        // remember: 1Bit is lsb->msb
         NGFX_ASSERT_EQ(checker->format, n_GBitmapFormat1Bit);
-        NGFX_ASSERT_EQ(checker->addr[0] & 3, 0b01);
-        NGFX_ASSERT_EQ(checker->addr[1] & 3, 0b00);
+        NGFX_ASSERT_EQ(checker->addr[pitch * 0] & 3, 0b01);
+        NGFX_ASSERT_EQ(checker->addr[pitch * 1] & 3, 0b00);
     }
 )
