@@ -81,9 +81,11 @@ void n_graphics_blit_palette(struct n_GContext *ctx, const n_GBitmap *bitmap,
     uint8_t bits_per_pixel = n_gbitmapformat_get_bits_per_pixel(bitmap->format);
     uint8_t index_mask = (1 << bits_per_pixel) - 1;
     uint8_t pixels_per_byte = 8 / bits_per_pixel;
+    int offset_in_byte = pixels_per_byte - 1;
     const n_GColor* palette = bitmap->palette;
     if (bitmap->format == n_GBitmapFormat1Bit) {
         palette = (const n_GColor*)bw_palettes[ctx->comp_op];
+        offset_in_byte = 0;
     }
 
     // Blit the bitmap
@@ -100,7 +102,7 @@ void n_graphics_blit_palette(struct n_GContext *ctx, const n_GBitmap *bitmap,
         for (int x = 0; x < bounds.size.w; x++) {
             int src_x = bitmap->bounds.origin.x + (src_offset.x + x) % bitmap->bounds.size.w;
             uint8_t src_pixel_byte = bm_line[src_x / pixels_per_byte];
-            int src_pixel_bit = (src_x % pixels_per_byte) * bits_per_pixel;
+            int src_pixel_bit = abs(offset_in_byte - src_x % pixels_per_byte) * bits_per_pixel;
             int src_color_index = (src_pixel_byte >> src_pixel_bit) & index_mask;
             n_GColor src_color = palette[src_color_index];
 

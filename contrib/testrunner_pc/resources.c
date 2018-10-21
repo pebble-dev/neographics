@@ -268,6 +268,10 @@ n_GBitmap *convert8BitImage(n_GBitmap *source, n_GBitmapFormat format) {
         case n_GBitmapFormat1Bit: bits_per_pixel = 1; break;
         default: return NULL;
     }
+    uint32_t pixels_per_byte = 8 / bits_per_pixel;
+    int32_t offset_in_byte = format == n_GBitmapFormat1Bit
+        ? 0 // everything except 1Bit is msb->lsb
+        : pixels_per_byte - 1;
 
     uint32_t w = source->raw_bitmap_size.w;
     uint32_t h = source->raw_bitmap_size.h;
@@ -307,9 +311,9 @@ n_GBitmap *convert8BitImage(n_GBitmap *source, n_GBitmapFormat format) {
                 }
             }
 
-            uint32_t byte_index = y * pitch + x / (8 / bits_per_pixel);
+            uint32_t byte_index = y * pitch + x / pixels_per_byte;
             uint32_t mask = (1 << bits_per_pixel) - 1;
-            uint32_t shift = (x % (8 / bits_per_pixel)) * bits_per_pixel;
+            uint32_t shift = abs(offset_in_byte - x % pixels_per_byte) * bits_per_pixel;
             res->addr[byte_index] |= (nearest & mask) << shift;
         }
     }

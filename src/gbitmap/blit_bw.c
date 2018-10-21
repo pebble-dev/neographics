@@ -49,6 +49,9 @@ void n_graphics_blit_alpha(struct n_GContext *ctx, const n_GBitmap *bitmap,
     uint8_t bits_per_pixel = n_gbitmapformat_get_bits_per_pixel(bitmap->format);
     uint8_t index_mask = (1 << bits_per_pixel) - 1;
     uint8_t pixels_per_byte = 8 / bits_per_pixel;
+    int offset_in_byte = bitmap->format == n_GBitmapFormat1Bit
+        ? 0
+        : pixels_per_byte - 1;
 
     for (int y = 0; y < bounds.size.h; y++) {
         for (int x = 0; x < bounds.size.w; x++) {
@@ -62,7 +65,7 @@ void n_graphics_blit_alpha(struct n_GContext *ctx, const n_GBitmap *bitmap,
             int src_x = bitmap->bounds.origin.x + (src_offset.x + x) % bitmap->bounds.size.w;
             int src_y = bitmap->bounds.origin.y + (src_offset.y + y) % bitmap->bounds.size.h;
             int src_byte = bitmap->addr[src_y * bitmap->row_size_bytes + src_x / pixels_per_byte];
-            int src_bit = (src_x % pixels_per_byte) * bits_per_pixel;
+            int src_bit = abs(offset_in_byte - src_x % pixels_per_byte) * bits_per_pixel;
             int src_index = (src_byte >> src_bit) & index_mask;
             int src_color = color_palette >> src_index;
             int src_alpha = alpha_palette >> src_index;
