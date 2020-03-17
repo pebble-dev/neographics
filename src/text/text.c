@@ -69,6 +69,7 @@ void n_graphics_draw_text(
     //    - We then use that character's index as the beginning
     //      of the next line.
     n_GPoint char_origin = box.origin, line_origin = box.origin;
+    uint8_t line_height = n_graphics_font_get_line_height(font); /* Cache this, because it is expensive on RebbleOS. */
     uint32_t line_begin = 0, index = 0, next_index = 0;
     int32_t last_breakable_index = -1, last_renderable_index = -1,
             lenience = n_graphics_font_get_glyph_info(font, ' ')->advance;
@@ -88,7 +89,7 @@ void n_graphics_draw_text(
                         <= box.origin.x + box.size.w)) {
             n_graphics_prv_draw_text_line(ctx, text,
                 line_begin, index, font, line_origin);
-            char_origin.x = box.origin.x, char_origin.y += font->line_height;
+            char_origin.x = box.origin.x, char_origin.y += line_height;
             last_breakable_index = last_renderable_index = -1;
             line_origin = char_origin;
             index = next_index = index + 1;
@@ -179,7 +180,7 @@ void n_graphics_draw_text(
                             line_begin, last_breakable_index, font, line_origin);
                 }
                 index = next_index = last_breakable_index;
-                char_origin.x = box.origin.x, char_origin.y += font->line_height;
+                char_origin.x = box.origin.x, char_origin.y += line_height;
                 line_begin = last_breakable_index;
                 last_breakable_index = last_renderable_index = -1;
                 line_origin = char_origin;
@@ -206,17 +207,17 @@ void n_graphics_draw_text(
                     n_graphics_font_draw_glyph(ctx, hyphen, end);
                 }
                 index = next_index = last_renderable_index;
-                char_origin.x = box.origin.x, char_origin.y += font->line_height;
+                char_origin.x = box.origin.x, char_origin.y += line_height;
                 line_begin = last_renderable_index;
                 last_breakable_index = last_renderable_index = -1;
                 line_origin = char_origin;
             } else {
                 n_graphics_font_draw_glyph(ctx, hyphen, line_origin);
                 line_begin = next_index;
-                char_origin.x = box.origin.x, char_origin.y += font->line_height;
+                char_origin.x = box.origin.x, char_origin.y += line_height;
                 line_origin = char_origin;
             }
-            if (line_origin.y + font->line_height >= box.origin.y + box.size.h) {
+            if (line_origin.y + line_height >= box.origin.y + box.size.h) {
                 return;
             }
         }

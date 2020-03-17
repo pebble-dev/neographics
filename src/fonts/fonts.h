@@ -74,10 +74,17 @@ typedef struct n_GGlyphInfo {
     uint8_t data[];
 } __attribute__((__packed__)) n_GGlyphInfo;
 
+#ifdef REBBLEOS
+/*!
+ * Inside RebbleOS, fonts are actually files. 
+ */
+typedef struct file * n_GFont;
+#else
 /*!
  * Alias for user-facing API.
  */
 typedef n_GFontInfo * n_GFont;
+#endif
 
 /*!
  * Get the line height of a given font.
