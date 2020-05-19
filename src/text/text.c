@@ -94,6 +94,9 @@ void n_graphics_draw_text(
             line_origin = char_origin;
             index = next_index = index + 1;
             line_begin = index;
+            if (line_origin.y + line_height >= box.origin.y + box.size.h) {
+                return;
+            }
             continue;
         }
 
