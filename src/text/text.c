@@ -18,45 +18,68 @@
         /* extended a and b */ ((a) >= 0x100 && (a) <= 0x24f) \
     )
 
+static uint32_t n_graphics_codepoint_from_utf8(const char *text, int *bytes) {
+    uint32_t codepoint = 0;
+    int nbytes = 0;
+    
+    // We're following the 2003 UTF-8 definition:
+    // 0b0xxxxxxx
+    // 0b110xxxxx 0b10xxxxxx
+    // 0b1110xxxx 0b10xxxxxx 0b10xxxxxx
+    // 0b11110xxx 0b10xxxxxx 0b10xxxxxx 0b10xxxxxx
+    
+    if (text[0] & 0b10000000) {
+        if ((text[0] & 0b11100000) == 0b11000000) {
+            codepoint = ((text[0] &  0b11111) << 6)
+                      +  (text[1] & 0b111111);
+            nbytes = 2;
+        } else if ((text[0] & 0b11110000) == 0b11100000) {
+            codepoint = ((text[0] &   0b1111) << 12)
+                      + ((text[1] & 0b111111) << 6)
+                      +  (text[2] & 0b111111);
+            nbytes = 3;
+        } else if ((text[0] & 0b11111000) == 0b11110000) {
+            codepoint = ((text[0] &    0b111) << 18)
+                      + ((text[1] & 0b111111) << 12)
+                      + ((text[2] & 0b111111) << 6)
+                      +  (text[3] & 0b111111);
+            nbytes = 4;
+        } else {
+            nbytes = 1;
+        }
+    } else {
+        codepoint = text[0];
+        nbytes = 1;
+    }
+    
+    if (bytes) {
+        *bytes = nbytes;
+    }
+    
+    return codepoint;
+}
+
 static n_GPoint n_graphics_prv_draw_text_line(n_GContext * ctx, const char * text,
         uint32_t idx, uint32_t idx_end,
         n_GFont const font, n_GPoint text_origin) {
     while (idx < idx_end) {
-        uint32_t codepoint = 0;
-        if (text[idx] & 0b10000000) {
-            if ((text[idx] & 0b11100000) == 0b11000000) {
-                codepoint = ((text[idx  ] &  0b11111) << 6)
-                          +  (text[idx+1] & 0b111111);
-                idx += 2;
-            } else if ((text[idx] & 0b11110000) == 0b11100000) {
-                codepoint = ((text[idx  ] &   0b1111) << 12)
-                          + ((text[idx+1] & 0b111111) << 6)
-                          +  (text[idx+2] & 0b111111);
-                idx += 3;
-            } else if ((text[idx] & 0b11111000) == 0b11110000) {
-                codepoint = ((text[idx  ] &    0b111) << 18)
-                          + ((text[idx+1] & 0b111111) << 12)
-                          + ((text[idx+2] & 0b111111) << 6)
-                          +  (text[idx+3] & 0b111111);
-                idx += 4;
-            } else {
-                idx += 1;
-            }
-        } else {
-            codepoint = text[idx];
-            idx += 1;
-        }
+        int nbytes;
+        uint32_t codepoint = n_graphics_codepoint_from_utf8(text + idx, &nbytes);
+        idx += nbytes;
+        
         n_GGlyphInfo * glyph = n_graphics_font_get_glyph_info(font, codepoint);
-        n_graphics_font_draw_glyph(ctx, glyph, text_origin);
+        if (ctx) {
+            n_graphics_font_draw_glyph(ctx, glyph, text_origin);
+        }
         text_origin.x += glyph->advance;
     }
     return text_origin;
 }
 
-void n_graphics_draw_text(
+void n_graphics_draw_text_ex(
     n_GContext * ctx, const char * text, n_GFont const font, const n_GRect box,
     const n_GTextOverflowMode overflow_mode, const n_GTextAlignment alignment,
-    n_GTextAttributes * text_attributes) {
+    n_GTextAttributes * text_attributes, n_GSize * outsize) {
     //TODO alignment
     //TODO attributes
 
@@ -75,57 +98,35 @@ void n_graphics_draw_text(
             lenience = n_graphics_font_get_glyph_info(font, ' ')->advance;
     n_GGlyphInfo * hyphen = n_graphics_font_get_glyph_info(font, '-'),
                  * glyph = NULL;
+    n_GPoint bbox = (n_GPoint) { .x = box.origin.x, .y = box.origin.y };
+    n_GPoint line_endpt;
 
     uint32_t codepoint = 0, next_codepoint = 0, last_codepoint = 0,
         last_renderable_codepoint = 0, last_breakable_codepoint = 0;
     while (text[index] != '\0') {
-        // We're following the 2003 UTF-8 definition:
-        // 0b0xxxxxxx
-        // 0b110xxxxx 0b10xxxxxx
-        // 0b1110xxxx 0b10xxxxxx 0b10xxxxxx
-        // 0b11110xxx 0b10xxxxxx 0b10xxxxxx 0b10xxxxxx
         if (text[index] == '\n'
                 && (char_origin.x + (__CODEPOINT_NEEDS_HYPHEN_AFTER(codepoint) ? hyphen->advance : 0)
                         <= box.origin.x + box.size.w)) {
-            n_graphics_prv_draw_text_line(ctx, text,
+            line_endpt = n_graphics_prv_draw_text_line(ctx, text,
                 line_begin, index, font, line_origin);
+            bbox.x = (bbox.x > line_endpt.x) ? bbox.x : line_endpt.x;
             char_origin.x = box.origin.x, char_origin.y += line_height;
+            bbox.y = char_origin.y;
             last_breakable_index = last_renderable_index = -1;
             line_origin = char_origin;
             index = next_index = index + 1;
             line_begin = index;
             if (line_origin.y + line_height >= box.origin.y + box.size.h) {
-                return;
+                goto overflow;
             }
             continue;
         }
 
-        if (text[index] & 0b10000000) { // begin of multibyte character
-            if ((text[index] & 0b11100000) == 0b11000000) {
-                next_codepoint = ((text[index  ] &  0b11111) << 6)
-                               +  (text[index+1] & 0b111111);
-                next_index += 2;
-            } else if ((text[index] & 0b11110000) == 0b11100000) {
-                next_codepoint = ((text[index  ] &   0b1111) << 12)
-                               + ((text[index+1] & 0b111111) << 6)
-                               +  (text[index+2] & 0b111111);
-                next_index += 3;
-            } else if ((text[index] & 0b11111000) == 0b11110000) {
-                next_codepoint = ((text[index  ] &    0b111) << 18)
-                               + ((text[index+1] & 0b111111) << 12)
-                               + ((text[index+2] & 0b111111) << 6)
-                               +  (text[index+3] & 0b111111);
-                next_index += 4;
-            } else {
-                next_codepoint = 0;
-                next_index += 1;
-            }
-        } else {
-            next_codepoint = text[index];
-            next_index += 1;
-        }
-        n_GGlyphInfo * next_glyph = n_graphics_font_get_glyph_info(font, next_codepoint);
+        int nbytes;
+        next_codepoint = n_graphics_codepoint_from_utf8(text + index, &nbytes);
+        next_index += nbytes;
 
+        n_GGlyphInfo * next_glyph = n_graphics_font_get_glyph_info(font, next_codepoint);
 
         // Debugging:
         // n_graphics_context_set_text_color(ctx, n_GColorLightGray);
@@ -167,19 +168,19 @@ void n_graphics_draw_text(
             if (last_breakable_index > 0) {
                 switch (alignment) {
                     case n_GTextAlignmentCenter:
-                        n_graphics_prv_draw_text_line(ctx, text,
+                        line_endpt = n_graphics_prv_draw_text_line(ctx, text,
                             line_begin, last_breakable_index, font,
                             n_GPoint(line_origin.x + (box.size.w - (char_origin.x - line_origin.x))/2,
                                      line_origin.y));
                         break;
                     case n_GTextAlignmentRight:
-                        n_graphics_prv_draw_text_line(ctx, text,
+                        line_endpt = n_graphics_prv_draw_text_line(ctx, text,
                             line_begin, last_breakable_index, font,
                             n_GPoint(line_origin.x + box.size.w - (char_origin.x - line_origin.x),
                                      line_origin.y));
                         break;
                     default:
-                        n_graphics_prv_draw_text_line(ctx, text,
+                        line_endpt = n_graphics_prv_draw_text_line(ctx, text,
                             line_begin, last_breakable_index, font, line_origin);
                 }
                 index = next_index = last_breakable_index;
@@ -188,26 +189,28 @@ void n_graphics_draw_text(
                 last_breakable_index = last_renderable_index = -1;
                 line_origin = char_origin;
             } else if (last_renderable_index > 0) {
-                n_GPoint end;
                 switch (alignment) {
                     case n_GTextAlignmentCenter:
-                        end = n_graphics_prv_draw_text_line(ctx, text,
+                        line_endpt = n_graphics_prv_draw_text_line(ctx, text,
                             line_begin, last_renderable_index, font,
                             n_GPoint(line_origin.x + (box.size.w - (char_origin.x - line_origin.x))/2,
                                      line_origin.y));
                         break;
                     case n_GTextAlignmentRight:
-                        end = n_graphics_prv_draw_text_line(ctx, text,
+                        line_endpt = n_graphics_prv_draw_text_line(ctx, text,
                             line_begin, last_renderable_index, font,
                             n_GPoint(line_origin.x + box.size.w - (char_origin.x - line_origin.x),
                                      line_origin.y));
                         break;
                     default:
-                        end = n_graphics_prv_draw_text_line(ctx, text,
+                        line_endpt = n_graphics_prv_draw_text_line(ctx, text,
                             line_begin, last_renderable_index, font, line_origin);
                 }
                 if (__CODEPOINT_NEEDS_HYPHEN_AFTER(last_renderable_codepoint) || true) { // TODO
-                    n_graphics_font_draw_glyph(ctx, hyphen, end);
+                    if (ctx) {
+                        n_graphics_font_draw_glyph(ctx, hyphen, line_endpt);
+                        line_endpt.x += hyphen->advance;
+                    }
                 }
                 index = next_index = last_renderable_index;
                 char_origin.x = box.origin.x, char_origin.y += line_height;
@@ -215,13 +218,19 @@ void n_graphics_draw_text(
                 last_breakable_index = last_renderable_index = -1;
                 line_origin = char_origin;
             } else {
-                n_graphics_font_draw_glyph(ctx, hyphen, line_origin);
+                if (ctx) {
+                    n_graphics_font_draw_glyph(ctx, hyphen, line_origin);
+                    line_endpt = line_origin;
+                    line_endpt.x += hyphen->advance;
+                }
                 line_begin = next_index;
                 char_origin.x = box.origin.x, char_origin.y += line_height;
                 line_origin = char_origin;
             }
+            bbox.x = (bbox.x > line_endpt.x) ? bbox.x : line_endpt.x;
+            bbox.y = line_endpt.y + line_height;
             if (line_origin.y + line_height >= box.origin.y + box.size.h) {
-                return;
+                goto overflow;
             }
         }
         index += (0 * line_begin * last_breakable_codepoint);
@@ -229,21 +238,52 @@ void n_graphics_draw_text(
     if (index != line_begin) {
         switch (alignment) {
             case n_GTextAlignmentCenter:
-                n_graphics_prv_draw_text_line(ctx, text,
+                line_endpt = n_graphics_prv_draw_text_line(ctx, text,
                     line_begin, index, font,
                     n_GPoint(line_origin.x + (box.size.w - (char_origin.x - line_origin.x))/2,
                              line_origin.y));
                 break;
             case n_GTextAlignmentRight:
-                n_graphics_prv_draw_text_line(ctx, text,
+                line_endpt = n_graphics_prv_draw_text_line(ctx, text,
                     line_begin, index, font,
                     n_GPoint(line_origin.x + box.size.w - (char_origin.x - line_origin.x),
                              line_origin.y));
                 break;
             case n_GTextAlignmentLeft:
             default:
-                n_graphics_prv_draw_text_line(ctx, text,
+                line_endpt = n_graphics_prv_draw_text_line(ctx, text,
                     line_begin, index, font, line_origin);
         }
+        bbox.x = (bbox.x > line_endpt.x) ? bbox.x : line_endpt.x;
+        bbox.y = line_endpt.y + line_height;
     }
+
+overflow:
+    if (outsize) {
+        outsize->w = bbox.x - box.origin.x;
+        outsize->h = bbox.y - box.origin.y;
+    }
+    return;
+}
+
+void n_graphics_draw_text(
+    n_GContext * ctx, const char * text, n_GFont const font, const n_GRect box,
+    const n_GTextOverflowMode overflow_mode, const n_GTextAlignment alignment,
+    n_GTextAttributes * text_attributes) {
+
+    n_graphics_draw_text_ex(ctx, text, font, box, overflow_mode, alignment,
+        text_attributes, NULL);
+}
+
+n_GSize n_graphics_text_layout_get_content_size_with_attributes(
+    const char * text, n_GFont const font, const n_GRect box,
+    const n_GTextOverflowMode overflow_mode, const n_GTextAlignment alignment,
+    n_GTextAttributes * text_attributes) {
+
+    n_GSize outsz;
+
+    n_graphics_draw_text_ex(NULL, text, font, box, overflow_mode, alignment,
+        text_attributes, &outsz);
+
+    return outsz;
 }

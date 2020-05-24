@@ -95,6 +95,15 @@ n_GSize n_graphics_text_layout_get_content_size_with_attributes(
     n_GTextAttributes * text_attributes);
 
 /*!
+ * Draw text with given parameters, and size it.
+ */
+void n_graphics_draw_text_ex(
+    n_GContext * ctx, const char * text, n_GFont const font, const n_GRect box,
+    const n_GTextOverflowMode overflow_mode, const n_GTextAlignment alignment,
+    n_GTextAttributes * text_attributes, n_GSize * outsz);
+
+
+/*!
  * Macro for reverse-compatibility for attributeless content size querying.
  */
 #define n_graphics_text_layout_get_content_size(a, b, c, d)\
