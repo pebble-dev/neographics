@@ -41,8 +41,11 @@ void n_graphics_blit_alpha(struct n_GContext *ctx, const n_GBitmap *bitmap,
     uint16_t alpha_palette = 0xffff;
     for (int i = 0; i < bitmap->palette_size; i++) {
         n_GColor c = bitmap->palette[i];
-        color_palette |= (c.r + c.g + c.b > 6) << i;
-        if (ctx->comp_op == n_GCompOpSet && c.a < 2)
+        if (ctx->comp_op == n_GCompOpClear)
+            color_palette |= (c.r + c.g + c.b <= 6) << i;
+        else
+            color_palette |= (c.r + c.g + c.b > 6) << i;
+        if ((ctx->comp_op == n_GCompOpSet || ctx->comp_op == n_GCompOpClear) && c.a < 2)
             alpha_palette &= ~(1 << i);
     }
     
