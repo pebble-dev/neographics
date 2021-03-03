@@ -86,7 +86,7 @@ static n_GPoint n_graphics_prv_draw_text_line(n_GContext * ctx, const char * tex
 
 static n_GPoint n_graphics_prv_get_aligned_text_origin(const char * text, 
     uint32_t idx, uint32_t indx_end, const n_GRect box, const n_GPoint line_origin,
-    int8_t * glyph_widths, const n_GTextAlignment alignment) {
+    int8_t * glyph_widths, uint8_t padding, const n_GTextAlignment alignment) {
 
     // Calculate origin of the character
     // where we are breaking the line.
@@ -97,6 +97,8 @@ static n_GPoint n_graphics_prv_get_aligned_text_origin(const char * text,
             continue;
         else
             breakable_char_origin.x += *(glyph_widths + i);
+
+    breakable_char_origin.x += padding;
 
     switch (alignment) {
         case n_GTextAlignmentCenter:
@@ -148,7 +150,7 @@ void n_graphics_draw_text_ex(
 
             n_GPoint text_origin = n_graphics_prv_get_aligned_text_origin(
                 text, line_begin, index, box, line_origin,
-                glyph_widths, alignment);
+                glyph_widths, 0, alignment);
 
             line_endpt = n_graphics_prv_draw_text_line(ctx, text,
                 line_begin, index, font, text_origin);
@@ -219,7 +221,7 @@ void n_graphics_draw_text_ex(
             if (last_breakable_index > 0) {
                 n_GPoint text_origin = n_graphics_prv_get_aligned_text_origin(
                     text, line_begin, last_breakable_index, box, line_origin,
-                    glyph_widths, alignment);
+                    glyph_widths, 0, alignment);
 
                 line_endpt = n_graphics_prv_draw_text_line(ctx, text, line_begin, last_breakable_index, font, text_origin);
 
@@ -230,31 +232,12 @@ void n_graphics_draw_text_ex(
                 line_origin = char_origin;
             } else if (last_renderable_index > 0) {
                 // Break in the middle of a word, need to include hyphen
-                n_GPoint breakable_char_origin = {
-                    .x = box.origin.x + hyphen->advance,
-                    .y = box.origin.y
-                };
+                n_GPoint text_origin = n_graphics_prv_get_aligned_text_origin(
+                    text, line_begin, last_renderable_index, box, line_origin,
+                    glyph_widths, hyphen->advance, alignment);
 
-                for (int i = line_begin; i < last_renderable_index; i++)
-                    breakable_char_origin.x += *(glyph_widths + i);
+                line_endpt = n_graphics_prv_draw_text_line(ctx, text, line_begin, last_renderable_index, font, text_origin);
 
-                switch (alignment) {
-                    case n_GTextAlignmentCenter:
-                        line_endpt = n_graphics_prv_draw_text_line(ctx, text,
-                            line_begin, last_renderable_index, font,
-                            n_GPoint(line_origin.x + (box.size.w - (breakable_char_origin.x - line_origin.x))/2,
-                                     line_origin.y));
-                        break;
-                    case n_GTextAlignmentRight:
-                        line_endpt = n_graphics_prv_draw_text_line(ctx, text,
-                            line_begin, last_renderable_index, font,
-                            n_GPoint(line_origin.x + box.size.w - (breakable_char_origin.x - line_origin.x),
-                                     line_origin.y));
-                        break;
-                    default:
-                        line_endpt = n_graphics_prv_draw_text_line(ctx, text,
-                            line_begin, last_renderable_index, font, line_origin);
-                }
                 if (__CODEPOINT_NEEDS_HYPHEN_AFTER(last_renderable_codepoint) || true) { // TODO
                     if (ctx) {
                         n_graphics_font_draw_glyph(ctx, hyphen, line_endpt);
@@ -289,7 +272,7 @@ void n_graphics_draw_text_ex(
         // With text that fits on one line, this what prints it.
         // With multiline text, this prints the last line.
         n_GPoint text_origin = n_graphics_prv_get_aligned_text_origin(
-            text, line_begin, index, box, line_origin, glyph_widths, alignment);
+            text, line_begin, index, box, line_origin, glyph_widths, 0, alignment);
 
         line_endpt = n_graphics_prv_draw_text_line(ctx, text,
             line_begin, index, font, text_origin);
