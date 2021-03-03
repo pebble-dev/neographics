@@ -2,15 +2,23 @@
 
 // TODO possibly move from this to a "true" unicode subsystem
 
-#define __CODEPOINT_IGNORE_AT_LINE_END(a) ((a) == 32)
+#define CODEPOINT_SPACE 32
+#define __CODEPOINT_IGNORE_AT_LINE_END(a) ((a) == CODEPOINT_SPACE)
 // Breaking after this character is a _good idea_
 // (for example, breaking after spaces or hyphens is good)
 // This is preferred to prebreaking. Hyphens after postbreakables are ignored.
 // #define __CODEPOINT_GOOD_POSTBREAKABLE(a) (false)
-#define __CODEPOINT_GOOD_POSTBREAKABLE(a) ((a) == 32)
+#define __CODEPOINT_GOOD_POSTBREAKABLE(a) ((a) == CODEPOINT_SPACE)
 // Breaking after this character is allowed
 // (for example, you aren't allowed to break immediately before punctuation.)
-#define __CODEPOINT_ALLOW_PREBREAKABLE(a) (!((a) == 32 || (a) == 33 || (a) == 34 || (a) == 44 || (a) == 46))
+#define __CODEPOINT_ALLOW_PREBREAKABLE(a) (!(\
+        /* space            */ (a) == CODEPOINT_SPACE ||\
+        /* exclamation mark */ (a) == 33 ||\
+        /* double quote     */ (a) == 34 ||\
+        /* comma            */ (a) == 44 ||\
+        /* period           */ (a) == 46) \
+    )
+
 #define __CODEPOINT_NEEDS_HYPHEN_AFTER(a) (\
         /* numbers          */ ((a) >= 0x30 && (a) <= 0x39) ||\
         /* basic uppercase  */ ((a) >= 0x41 && (a) <= 0x5a) ||\
@@ -103,6 +111,10 @@ void n_graphics_draw_text_ex(
 
     uint32_t codepoint = 0, next_codepoint = 0, last_codepoint = 0,
         last_renderable_codepoint = 0, last_breakable_codepoint = 0;
+
+    // Initialize cache for glyph widths
+    int8_t * glyph_widths = malloc(strlen(text) * sizeof(int8_t));
+
     while (text[index] != '\0') {
         if (text[index] == '\n'
                 && (char_origin.x + (__CODEPOINT_NEEDS_HYPHEN_AFTER(codepoint) ? hyphen->advance : 0)
@@ -128,6 +140,9 @@ void n_graphics_draw_text_ex(
 
         n_GGlyphInfo * next_glyph = n_graphics_font_get_glyph_info(font, next_codepoint);
 
+        // Cache the width for later calculations
+        glyph_widths[index] = next_glyph->advance;
+        
         // Debugging:
         // n_graphics_context_set_text_color(ctx, n_GColorLightGray);
         // n_graphics_font_draw_glyph(ctx, next_glyph, char_origin);
@@ -163,20 +178,34 @@ void n_graphics_draw_text_ex(
         glyph = next_glyph;
         char_origin.x += glyph->advance;
 
-        if ((char_origin.x + (__CODEPOINT_NEEDS_HYPHEN_AFTER(codepoint) ? hyphen->advance : 0) - lenience
-                > box.origin.x + box.size.w)) {
+        bool did_text_line_exceed_width = (char_origin.x + (__CODEPOINT_NEEDS_HYPHEN_AFTER(codepoint) ? hyphen->advance : 0) - lenience > box.origin.x + box.size.w);
+
+        if (did_text_line_exceed_width) {
+            // This block runs if we have to print a line of text that needs to be broken up.
+            // Single line text - this never runs.
+            // Multi line text - this will print all but the last line.
             if (last_breakable_index > 0) {
+                // Calculate origin of the character
+                // where we are breaking the line.
+                n_GPoint breakable_char_origin = box.origin;
+                for (int i = line_begin; i < last_breakable_index; i++)
+                    if (i == last_breakable_index && __CODEPOINT_IGNORE_AT_LINE_END(*(text + i)))
+                        // Don't account for spaces at the end of lines
+                        continue;
+                    else
+                        breakable_char_origin.x += *(glyph_widths + i);
+
                 switch (alignment) {
                     case n_GTextAlignmentCenter:
                         line_endpt = n_graphics_prv_draw_text_line(ctx, text,
                             line_begin, last_breakable_index, font,
-                            n_GPoint(line_origin.x + (box.size.w - (char_origin.x - line_origin.x))/2,
+                            n_GPoint(line_origin.x + (box.size.w - (breakable_char_origin.x - line_origin.x))/2,
                                      line_origin.y));
                         break;
                     case n_GTextAlignmentRight:
                         line_endpt = n_graphics_prv_draw_text_line(ctx, text,
                             line_begin, last_breakable_index, font,
-                            n_GPoint(line_origin.x + box.size.w - (char_origin.x - line_origin.x),
+                            n_GPoint(line_origin.x + box.size.w - (breakable_char_origin.x - line_origin.x),
                                      line_origin.y));
                         break;
                     default:
@@ -189,17 +218,26 @@ void n_graphics_draw_text_ex(
                 last_breakable_index = last_renderable_index = -1;
                 line_origin = char_origin;
             } else if (last_renderable_index > 0) {
+                // Break in the middle of a word, need to include hyphen
+                n_GPoint breakable_char_origin = {
+                    .x = box.origin.x + hyphen->advance,
+                    .y = box.origin.y
+                };
+
+                for (int i = line_begin; i < last_renderable_index; i++)
+                    breakable_char_origin.x += *(glyph_widths + i);
+
                 switch (alignment) {
                     case n_GTextAlignmentCenter:
                         line_endpt = n_graphics_prv_draw_text_line(ctx, text,
                             line_begin, last_renderable_index, font,
-                            n_GPoint(line_origin.x + (box.size.w - (char_origin.x - line_origin.x))/2,
+                            n_GPoint(line_origin.x + (box.size.w - (breakable_char_origin.x - line_origin.x))/2,
                                      line_origin.y));
                         break;
                     case n_GTextAlignmentRight:
                         line_endpt = n_graphics_prv_draw_text_line(ctx, text,
                             line_begin, last_renderable_index, font,
-                            n_GPoint(line_origin.x + box.size.w - (char_origin.x - line_origin.x),
+                            n_GPoint(line_origin.x + box.size.w - (breakable_char_origin.x - line_origin.x),
                                      line_origin.y));
                         break;
                     default:
@@ -236,6 +274,9 @@ void n_graphics_draw_text_ex(
         index += (0 * line_begin * last_breakable_codepoint);
     }
     if (index != line_begin) {
+        // This block of code runs if we need to print the unbroken line of text.
+        // With text that fits on one line, this what prints it.
+        // With multiline text, this prints the last line.
         switch (alignment) {
             case n_GTextAlignmentCenter:
                 line_endpt = n_graphics_prv_draw_text_line(ctx, text,
@@ -263,6 +304,9 @@ overflow:
         outsize->w = bbox.x - box.origin.x;
         outsize->h = bbox.y - box.origin.y;
     }
+
+    free(glyph_widths);
+
     return;
 }
 
