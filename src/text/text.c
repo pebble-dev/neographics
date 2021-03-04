@@ -92,13 +92,13 @@ static n_GPoint n_graphics_prv_get_aligned_text_origin(const char * text,
     // where we are breaking the line.
     n_GPoint breakable_char_origin = box.origin;
     int nbytes;
+
     for (int i = idx; i < indx_end; i += nbytes)
         if (i == indx_end - 1 && __CODEPOINT_IGNORE_AT_LINE_END(*(text + i)))
             // Don't account for spaces at the end of lines
             continue;
         else {
             uint32_t codepoint = n_graphics_codepoint_from_utf8(text + i, &nbytes);
-            // next_index += nbytes;
             breakable_char_origin.x += (n_graphics_font_get_glyph_info(font, codepoint))->advance;
         }
 
@@ -229,14 +229,14 @@ void n_graphics_draw_text_ex(
                 last_breakable_index = last_renderable_index = -1;
                 line_origin = char_origin;
             } else if (last_renderable_index > 0) {
-                // Break in the middle of a word, need to include hyphen
+                bool is_hyphenated = __CODEPOINT_NEEDS_HYPHEN_AFTER(last_renderable_codepoint);
                 n_GPoint text_origin = n_graphics_prv_get_aligned_text_origin(
                     text, line_begin, last_renderable_index, box, line_origin,
-                    font, hyphen->advance, alignment);
+                    font, is_hyphenated ? hyphen->advance : 0, alignment);
 
                 line_endpt = n_graphics_prv_draw_text_line(ctx, text, line_begin, last_renderable_index, font, text_origin);
 
-                if (__CODEPOINT_NEEDS_HYPHEN_AFTER(last_renderable_codepoint) || true) { // TODO
+                if (is_hyphenated) {
                     if (ctx) {
                         n_graphics_font_draw_glyph(ctx, hyphen, line_endpt);
                         line_endpt.x += hyphen->advance;
