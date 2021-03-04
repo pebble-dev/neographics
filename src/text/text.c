@@ -86,17 +86,21 @@ static n_GPoint n_graphics_prv_draw_text_line(n_GContext * ctx, const char * tex
 
 static n_GPoint n_graphics_prv_get_aligned_text_origin(const char * text, 
     uint32_t idx, uint32_t indx_end, const n_GRect box, const n_GPoint line_origin,
-    int8_t * glyph_widths, uint8_t padding, const n_GTextAlignment alignment) {
+    n_GFont const font, uint8_t padding, const n_GTextAlignment alignment) {
 
     // Calculate origin of the character
     // where we are breaking the line.
     n_GPoint breakable_char_origin = box.origin;
-    for (int i = idx; i < indx_end; i++)
+    int nbytes;
+    for (int i = idx; i < indx_end; i += nbytes)
         if (i == indx_end - 1 && __CODEPOINT_IGNORE_AT_LINE_END(*(text + i)))
             // Don't account for spaces at the end of lines
             continue;
-        else
-            breakable_char_origin.x += *(glyph_widths + i);
+        else {
+            uint32_t codepoint = n_graphics_codepoint_from_utf8(text + i, &nbytes);
+            // next_index += nbytes;
+            breakable_char_origin.x += (n_graphics_font_get_glyph_info(font, codepoint))->advance;
+        }
 
     breakable_char_origin.x += padding;
 
@@ -140,9 +144,6 @@ void n_graphics_draw_text_ex(
     uint32_t codepoint = 0, next_codepoint = 0, last_codepoint = 0,
         last_renderable_codepoint = 0, last_breakable_codepoint = 0;
 
-    // Initialize cache for glyph widths
-    int8_t * glyph_widths = malloc(strlen(text) * sizeof(int8_t));
-
     while (text[index] != '\0') {
         if (text[index] == '\n'
                 && (char_origin.x + (__CODEPOINT_NEEDS_HYPHEN_AFTER(codepoint) ? hyphen->advance : 0)
@@ -150,7 +151,7 @@ void n_graphics_draw_text_ex(
 
             n_GPoint text_origin = n_graphics_prv_get_aligned_text_origin(
                 text, line_begin, index, box, line_origin,
-                glyph_widths, 0, alignment);
+                font, 0, alignment);
 
             line_endpt = n_graphics_prv_draw_text_line(ctx, text,
                 line_begin, index, font, text_origin);
@@ -173,9 +174,6 @@ void n_graphics_draw_text_ex(
         next_index += nbytes;
 
         n_GGlyphInfo * next_glyph = n_graphics_font_get_glyph_info(font, next_codepoint);
-
-        // Cache the width for later calculations
-        glyph_widths[index] = next_glyph->advance;
         
         // Debugging:
         // n_graphics_context_set_text_color(ctx, n_GColorLightGray);
@@ -221,7 +219,7 @@ void n_graphics_draw_text_ex(
             if (last_breakable_index > 0) {
                 n_GPoint text_origin = n_graphics_prv_get_aligned_text_origin(
                     text, line_begin, last_breakable_index, box, line_origin,
-                    glyph_widths, 0, alignment);
+                    font, 0, alignment);
 
                 line_endpt = n_graphics_prv_draw_text_line(ctx, text, line_begin, last_breakable_index, font, text_origin);
 
@@ -234,7 +232,7 @@ void n_graphics_draw_text_ex(
                 // Break in the middle of a word, need to include hyphen
                 n_GPoint text_origin = n_graphics_prv_get_aligned_text_origin(
                     text, line_begin, last_renderable_index, box, line_origin,
-                    glyph_widths, hyphen->advance, alignment);
+                    font, hyphen->advance, alignment);
 
                 line_endpt = n_graphics_prv_draw_text_line(ctx, text, line_begin, last_renderable_index, font, text_origin);
 
@@ -272,7 +270,7 @@ void n_graphics_draw_text_ex(
         // With text that fits on one line, this what prints it.
         // With multiline text, this prints the last line.
         n_GPoint text_origin = n_graphics_prv_get_aligned_text_origin(
-            text, line_begin, index, box, line_origin, glyph_widths, 0, alignment);
+            text, line_begin, index, box, line_origin, font, 0, alignment);
 
         line_endpt = n_graphics_prv_draw_text_line(ctx, text,
             line_begin, index, font, text_origin);
@@ -286,8 +284,6 @@ overflow:
         outsize->w = bbox.x - box.origin.x;
         outsize->h = bbox.y - box.origin.y;
     }
-
-    free(glyph_widths);
 
     return;
 }
